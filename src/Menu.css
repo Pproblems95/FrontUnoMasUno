@@ -1,0 +1,22 @@
+#header {
+    background: rgb(187, 103, 180);
+}
+.buttonDiv {
+    margin-right: 1%;
+    
+}
+
+.button {
+    background: transparent;
+    border-color: transparent;
+    color: #eb68d5;
+    text-decoration-line: underline;
+    font-size: 30;
+}
+
+@media (max-width:767px) {
+    .center-mobile{
+        display: table;
+        margin: 0 auto;
+    }
+}

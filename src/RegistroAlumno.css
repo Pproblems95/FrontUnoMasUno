@@ -1,0 +1,13 @@
+.inputs {
+    background: transparent;
+    border-top: transparent;
+    border-left: transparent;
+    border-right: transparent;
+    border-color: black;
+}
+
+#button {
+    background: black;
+    color:white;
+
+}
