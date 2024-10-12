@@ -9,6 +9,7 @@ import { Modal } from 'react-bootstrap'
 
 
 function App() {
+  const url = import.meta.env.VITE_URL
   const [loading, SetLoading] = useState(true)
   const [loginError, SetLoError] = useState(null)
   const navigate = useNavigate()
@@ -17,7 +18,7 @@ function App() {
   
   useEffect(() => {
     SetLoading(true)
-    fetch('https://velazduran.com:3000/api/auth/check', {
+    fetch(url+'auth/check', {
       method: 'GET',
       credentials: 'include',
       headers:{'Content-Type': 'application/json'}
@@ -103,7 +104,7 @@ function App() {
               SetOpen(true)
             }
             else{
-              fetch('https://velazduran.com:3000/api/auth/login', {
+              fetch(url+'auth/login', {
                     method: 'POST',
                     credentials:'include',
                     headers: {'Content-Type': 'application/json'},

@@ -1,19 +1,20 @@
 import './Menu.css'
 import logo from '../images/logonofondo.png'
 import { Button } from 'react-bootstrap'
-import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 
 function Menu() {
+    const url = import.meta.env.VITE_URL
+    
     const navigate = useNavigate()
     const [data, SetData] = useState(null)
     const [loading, SetLoading] = useState(true)
-    const [loginError, SetLoError] = useState(null)
+    const [isAdmin, SetAdmin] = useState(false)
     useEffect(() => {
         SetLoading(true)
-        fetch('https://velazduran.com:3000/api/users/current', {
+        fetch(url+'users/current', {
             method: 'GET',
             credentials:'include',
             header: {'Content-Type' : 'application/json'}
@@ -26,9 +27,21 @@ function Menu() {
 
     useEffect(() => {
        if(data != null){
-        console.log(data)
+        if(data.error === false){
+            console.log('login exitoso')
+            console.log(data)
+        }
+        else{
+            navigate('/')
+        } 
        }    
+
     },[loading])
+    useEffect(() => {
+        if(data != null && data.body.type === 'admin'){
+            SetAdmin(true)
+        }
+    }, [data])
 
     
     if(loading){
@@ -41,17 +54,16 @@ function Menu() {
             <main style={{height:'100vh'}}class='d-flex flex-column justify-content-around ' >
                <div class='container-fluid d-flex justify-content-between' style={{background:'#55d0b6'}}>
                     <div class = 'd-flex '  >
-                    
+                        <p class='h3'>Bienvenido, {data.body.name}!</p>
                     </div>
                     <div class='d-flex align-items-center'>
-                        <strong class='h2'> Menú</strong>
+                        <strong class='h1'>Menú</strong>
                     </div>
                     <div  class='d-flex align-items-center' >
-                        
-                        <Button class=' btn' style={{background:'black'}} type='button' onClick={() => {
-                            // navigate('/menu/Administrar')
-                            console.log(data)
-                        }} >Administrar</Button>
+                       {isAdmin ? <Button class=' btn btn-sm' style={{background:'black'}} type='button' onClick={() => {
+                            navigate('/menu/Administrar')
+                        }} >Administrar</Button> : <p> </p>}
+
                         
                     </div>
                       
@@ -71,7 +83,7 @@ function Menu() {
                             navigate('/menu/Pagos')
                         }} >Pagos</Button>
                         <Button class=' btn' style={{background:'black', marginTop:'10%'}} type='button' onClick={() => {
-                            fetch('https://velazduran.com:3000/api/auth/logout', {
+                            fetch(url+'auth/logout', {
                                 method: 'DELETE',
                                 credentials: 'include'
                             })
