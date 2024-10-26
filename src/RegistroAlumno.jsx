@@ -4,6 +4,7 @@ import './RegistroAlumno.css'
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Modal } from 'react-bootstrap'
+import  estados from '../resources/estados.json'
 
 function RegistroAlumno() {
     let isValid = []
@@ -49,6 +50,7 @@ function RegistroAlumno() {
         }
     },[confirmation])
 
+
     
     
     const navigate = useNavigate()
@@ -61,8 +63,8 @@ function RegistroAlumno() {
         momFullName: '',
         dadFullName: '',
         country: '',
-        state: '',
-        city: '',
+        state: 'Aguascalientes',
+        city: 'Aguascalientes',
         postalCode: '',
         addres: '',
         emergencyPhone: '',
@@ -102,7 +104,7 @@ function RegistroAlumno() {
                         if(isValid.length > 0){
                             const invalidFields = isValid.map(([key]) => key).join(', ');
                             SetConfirmation(true)
-                            setError('Todos los campos deben tener de 3 a 20 caracteres. ') //fix sign
+                            setError('Todos los campos deben tener de 3 a 20 caracteres. '+ invalidFields) //fix sign
                             SetOpen(true)
                             return
                         }
@@ -159,11 +161,23 @@ function RegistroAlumno() {
                     </div>
                     <div className='m-4'>
                         <p className='h5 text-center'>Estado</p>
-                        <input className="inputs" required type="text" name='state' value={Student.state} onChange={(e) => { SetStudent({...Student, state: e.target.value}) }} />
+                        <select class='form-select border border-dark  ' style={{ width:'24vw'}} name="state" value={Student.state} onChange={(e) => {SetStudent({...Student, state: e.target.value})}}>
+                         {Object.keys(estados).map((llaves) => (
+                            <option  key={llaves} value={llaves} >
+                                {llaves}
+                            </option>
+                         ))}
+                        </select>
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5 text-center'>Ciudad</p>
-                        <input className="inputs " required type="text" name='city' value={Student.city} onChange={(e) => { SetStudent({...Student, city: e.target.value}) }} />
+                        <select  class='form-select border border-dark  ' name="city" style={{ width:'24vw'}} onChange={(e) => { SetStudent({ ...Student, city:e.target.value}) }}>
+                        {estados[Student.state].map((ciudad) => (
+                            <option class='mw-25' key={ciudad} value={ciudad}>
+                                {ciudad}
+                            </option>
+                            ))}
+                        </select>
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5 text-center'>Código postal</p>
@@ -195,7 +209,7 @@ function RegistroAlumno() {
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Sucursal</p>
-                        <select name="idBranch">
+                        <select class='form-select border border-dark' name="idBranch">
                           {branches.map(branch => (
                             <option key={branch.id} value={branch.id}>
                                 {branch.name}
