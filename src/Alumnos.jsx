@@ -18,13 +18,14 @@ function Item(props){
         <li style={{listStyle:'none', paddingInlineStart:0 }}>
             <div class='d-flex flex-row justify-content-between  border-bottom border-dark   ' style={{  borderBottomWidth:10, }} > 
                     <div class=' d-flex  text-truncate  ' style={{width:'33vw'}}>
-                    <p class=' align-self-center h6' style={{fontWeight:'bold', marginRight:10, }}>Alumno:</p>
-                    <p class='align-self-center' style={{marginTop:'1.4vh'}}>{props.name}</p>
+                    
+                    <p class=' align-self-center h6' style={{fontWeight:'bold', marginRight:10, }}>Sucursal:</p>
+                    <p class='align-self-center' style={{marginTop:'1.4vh'}}>{props.sucursal}</p>
                     </div>
                     
                     <div class=' d-inline-flex  text-truncate  ' style={{width:'33vw'}}>
-                    <p class=' align-self-center h6' style={{fontWeight:'bold', marginRight:10, }}>Sucursal:</p>
-                    <p class='align-self-center' style={{marginTop:'1.4vh'}}>{props.sucursal}</p>
+                    <p class=' align-self-center h6' style={{fontWeight:'bold', marginRight:10, }}>Alumno:</p>
+                    <p class='align-self-center' style={{marginTop:'1.4vh'}}>{props.name}</p>
                     </div>
 
                     <div class='align-content-center ' style={{}}> 
@@ -52,7 +53,8 @@ function Item(props){
 function Alumnos(){
     const [loading, SetLoading] = useState(true)
     const [data, SetData] = useState(null)
-    const [students, SetStudents] = useState(null)
+    const [students, SetStudents] = useState([])
+    const [studentsList, SetStudentsList] = useState([])
     const [count, SetCount] = useState(0)
     useEffect(() => {
         fetch(url+'auth/check', {
@@ -73,15 +75,33 @@ function Alumnos(){
                 credentials:'include',
               })  
               .then((res) => {return res.json()})
-              .then((res) => {SetStudents(res)})
+              .then((res) => {SetStudents(
+                 res.body.students.sort((a,b) => { const comparedStudents = a.branchName.localeCompare(b.branchName)
+                    if(comparedStudents !== 0){
+                        return comparedStudents
+                    }
+                    else{
+                        return a.patLastName.localeCompare(b.patLastName)
+                    }
+
+                 }))
+                })
               .catch((e) => {console.log(e)}) 
             }
             else {
                 navigate("/")
             }
         }
-        
+        console.log(students)
     }, [data])
+    useEffect(() => {
+        const existingIds = new Set(studentsList.map(student => student.id));
+        const studentsNoDuplicates = [
+          ...studentsList,
+          ...students.filter(student => !existingIds.has(student.id)),
+        ];
+        SetStudentsList(studentsNoDuplicates);
+      }, [students]);
     const url = import.meta.env.VITE_URL
     const navigate = useNavigate()
     if(!loading){
@@ -96,11 +116,11 @@ function Alumnos(){
                  </div>
                  <div style={{ }} class='d-flex flex-grow-1  m-1 flex-column ' >
                  <ul style={{listStyle:'none', padding:0, margin:0}}>
-                     {/* {students.map((data2) => <Item key={data2.body.students.id} sucursal={data2.body.students.branchName} name={data2.body.students.name} id={data2.body.students.id}> </Item>)} */}
+                     {studentsList.map((student) => <Item key={student.id} sucursal={student.branchName} name={student.patLastName + ' ' + student.matLastName + ' ' + student.name}  id={student.id}> </Item>)}
                      {/* corrige esta funcion para que despliegue los datos del json recibido  */}
                 </ul>
                  </div>
-                 <button class='flex-fill btn m-3 ' style={{background:'black', color:'white' }}>Ver más estudiantes</button> 
+                 {<button class='flex-fill btn m-3 ' style={{background:'black', color:'white' }}>Ver más estudiantes</button>} 
                  {/* checa en este boton que no se muestre si hay menos de 20 alumnos en la lista  */}
             </main>
          )
