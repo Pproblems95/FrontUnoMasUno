@@ -41,21 +41,14 @@ function Item(props){
     )
 }
 
-
-// function ListItems(){
-//     return(
-//         <ul style={{listStyle:'none', padding:0, margin:0}}>
-//             {data.map((data) => <Item key={data.id} sucursal={data.sucursal} name={data.name} id={data.id}> </Item>)}
-//         </ul>
-//     )
-// }
-
 function Alumnos(){
+    const [numberOfPages, SetNumber] = useState(0)
     const [loading, SetLoading] = useState(true)
     const [data, SetData] = useState(null)
-    const [students, SetStudents] = useState([])
+    const [students, SetStudents] = useState(null)
     const [studentsList, SetStudentsList] = useState([])
     const [count, SetCount] = useState(0)
+    // asegurarse que el usuario este logueado
     useEffect(() => {
         fetch(url+'auth/check', {
             method: 'GET',
@@ -66,26 +59,27 @@ function Alumnos(){
         .finally(() => {SetLoading(false)})
     }, [])
 
+    // asegurarse que data no dé error
     useEffect(() => {
         if(data != null){
             if(!data.error){
-              console.log("logueo exitoso")
               fetch(url+'students/all/1', {
                 method:'GET',
                 credentials:'include',
               })  
               .then((res) => {return res.json()})
-              .then((res) => {SetStudents(
-                 res.body.students.sort((a,b) => { const comparedStudents = a.branchName.localeCompare(b.branchName)
-                    if(comparedStudents !== 0){
-                        return comparedStudents
-                    }
-                    else{
-                        return a.patLastName.localeCompare(b.patLastName)
-                    }
+              .then((res) => {SetStudents(res)})
+            //   .then((res) => {SetStudents(
+            //      res.body.students.sort((a,b) => { const comparedStudents = a.branchName.localeCompare(b.branchName)
+            //         if(comparedStudents !== 0){
+            //             return comparedStudents
+            //         }
+            //         else{
+            //             return a.patLastName.localeCompare(b.patLastName)
+            //         }
 
-                 }))
-                })
+            //      }))
+            //     })
               .catch((e) => {console.log(e)}) 
             }
             else {
@@ -95,13 +89,31 @@ function Alumnos(){
         console.log(students)
     }, [data])
     useEffect(() => {
-        const existingIds = new Set(studentsList.map(student => student.id));
-        const studentsNoDuplicates = [
+        if(students !== null){
+            const existingIds = new Set(studentsList.map(student => student.id));
+            const studentsNoDuplicates = [
           ...studentsList,
-          ...students.filter(student => !existingIds.has(student.id)),
-        ];
-        SetStudentsList(studentsNoDuplicates);
-      }, [students]);
+          ...students.body.students.filter(student => !existingIds.has(student.id)),
+            ];
+            studentsNoDuplicates.sort((a, b) => {const comparedStudents = a.branchName.localeCompare(b.branchName)
+                if(comparedStudents !== 0){
+                    return comparedStudents
+                }
+                else{
+                    return a.patLastName.localeCompare(b.patLastName)
+                }
+            })
+            SetStudentsList(studentsNoDuplicates);
+            SetNumber(students.body.numberOfPages)
+        }}, [students])
+    // useEffect(() => {
+    //     const existingIds = new Set(studentsList.map(student => student.id));
+    //     const studentsNoDuplicates = [
+    //       ...studentsList,
+    //       ...students.filter(student => !existingIds.has(student.id)),
+    //     ];
+    //     SetStudentsList(studentsNoDuplicates);
+    //   }, [students]);
     const url = import.meta.env.VITE_URL
     const navigate = useNavigate()
     if(!loading){
@@ -120,7 +132,17 @@ function Alumnos(){
                      {/* corrige esta funcion para que despliegue los datos del json recibido  */}
                 </ul>
                  </div>
-                 {<button class='flex-fill btn m-3 ' style={{background:'black', color:'white' }}>Ver más estudiantes</button>} 
+                 <div class='d-flex flex-row'>
+                 <button class='flex-fill btn m-3 btn-sm' style={{background:'black', color:'white' }}> {'<'} </button>
+                 <div>
+                    {Array.from({length:numberOfPages}, (_,index) => (
+                        <button class='flex-fill btn m-3 ' style={{background:'black', color:'white' }}>{index+1}</button>
+                    ))}
+                    {/* <button class='flex-fill btn m-3 ' style={{background:'black', color:'white' }}>1</button> */}
+                 </div>
+                 <button class='flex-fill btn m-3 btn-sm' style={{background:'black', color:'white' }}>{'>'}</button>
+                 </div>
+                 
                  {/* checa en este boton que no se muestre si hay menos de 20 alumnos en la lista  */}
             </main>
          )
