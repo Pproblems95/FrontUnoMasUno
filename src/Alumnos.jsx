@@ -4,13 +4,13 @@ import './RegistroAlumno.css'
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-const data2 = [
-    {name: 'Morales Hernandez Jose Luis', sucursal:'instituto tecnologico de tijuana', id:0},
-    {name: 'sinuhe de jesus velazquez duran', sucursal:'instituto tecnologico de mexico', id:1},
-    {name: 'oscar arrellano lopez', sucursal: 'instituto tecnologico de mis huevos', id:2},
-    {name: 'alma maria rico', sucursal: 'instituto tecnologico del sexo', id:2}
+// const data2 = [
+//     {name: 'Morales Hernandez Jose Luis', sucursal:'instituto tecnologico de tijuana', id:0},
+//     {name: 'sinuhe de jesus velazquez duran', sucursal:'instituto tecnologico de mexico', id:1},
+//     {name: 'oscar arrellano lopez', sucursal: 'instituto tecnologico de mis huevos', id:2},
+//     {name: 'alma maria rico', sucursal: 'instituto tecnologico del sexo', id:2}
 
-]
+// ]
 
 function Item(props){
     const navigate = useNavigate()
@@ -42,13 +42,12 @@ function Item(props){
 }
 
 function Alumnos(){
+    const [isPressed, SetPressed] = useState(0)
     const [numberOfPages, SetNumber] = useState(0)
     const [loading, SetLoading] = useState(true)
     const [data, SetData] = useState(null)
     const [students, SetStudents] = useState(null)
     const [studentsList, SetStudentsList] = useState([])
-    const [count, SetCount] = useState(0)
-    // asegurarse que el usuario este logueado
     useEffect(() => {
         fetch(url+'auth/check', {
             method: 'GET',
@@ -59,27 +58,16 @@ function Alumnos(){
         .finally(() => {SetLoading(false)})
     }, [])
 
-    // asegurarse que data no dé error
     useEffect(() => {
         if(data != null){
             if(!data.error){
-              fetch(url+'students/all/1', {
+              fetch(url+'students/all/'+(isPressed+1), {
                 method:'GET',
                 credentials:'include',
               })  
               .then((res) => {return res.json()})
               .then((res) => {SetStudents(res)})
-            //   .then((res) => {SetStudents(
-            //      res.body.students.sort((a,b) => { const comparedStudents = a.branchName.localeCompare(b.branchName)
-            //         if(comparedStudents !== 0){
-            //             return comparedStudents
-            //         }
-            //         else{
-            //             return a.patLastName.localeCompare(b.patLastName)
-            //         }
 
-            //      }))
-            //     })
               .catch((e) => {console.log(e)}) 
             }
             else {
@@ -90,12 +78,9 @@ function Alumnos(){
     }, [data])
     useEffect(() => {
         if(students !== null){
-            const existingIds = new Set(studentsList.map(student => student.id));
-            const studentsNoDuplicates = [
-          ...studentsList,
-          ...students.body.students.filter(student => !existingIds.has(student.id)),
-            ];
-            studentsNoDuplicates.sort((a, b) => {const comparedStudents = a.branchName.localeCompare(b.branchName)
+            
+            SetNumber(students.body.numberOfPages)
+            const sortedStudents = students.body.students.sort((a,b) => { const comparedStudents = a.branchName.localeCompare(b.branchName)
                 if(comparedStudents !== 0){
                     return comparedStudents
                 }
@@ -103,24 +88,20 @@ function Alumnos(){
                     return a.patLastName.localeCompare(b.patLastName)
                 }
             })
-            SetStudentsList(studentsNoDuplicates);
-            SetNumber(students.body.numberOfPages)
+            SetStudentsList(sortedStudents)
+
+            
+
         }}, [students])
-    // useEffect(() => {
-    //     const existingIds = new Set(studentsList.map(student => student.id));
-    //     const studentsNoDuplicates = [
-    //       ...studentsList,
-    //       ...students.filter(student => !existingIds.has(student.id)),
-    //     ];
-    //     SetStudentsList(studentsNoDuplicates);
-    //   }, [students]);
+  
+
     const url = import.meta.env.VITE_URL
     const navigate = useNavigate()
     if(!loading){
         return(
             <main  class='d-flex flex-column'>
                  <div class='d-flex flex-row container-fluid justify-content-between ' style={{background:'#55d0b6'}}>
-                     <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
+                     <FaArrowAltCircleLeft class='align-self-center' id='regresar'style={{height:60, width:70, margin:10}} onClick={() => {
                          navigate('../menu')
                      }} />
                      <p class='h3 align-self-center ' >Lista de alumnos</p>
@@ -128,22 +109,32 @@ function Alumnos(){
                  </div>
                  <div style={{ }} class='d-flex flex-grow-1  m-1 flex-column ' >
                  <ul style={{listStyle:'none', padding:0, margin:0}}>
-                     {studentsList.map((student) => <Item key={student.id} sucursal={student.branchName} name={student.patLastName + ' ' + student.matLastName + ' ' + student.name}  id={student.id}> </Item>)}
-                     {/* corrige esta funcion para que despliegue los datos del json recibido  */}
+                    
+                     {studentsList.map((student) =>  (
+                        <Item key={student.id} sucursal={student.branchName} name={student.patLastName + ' ' + student.matLastName + ' ' + student.name}  id={student.id}> </Item>))}
                 </ul>
                  </div>
-                 <div class='d-flex flex-row'>
-                 <button class='flex-fill btn m-3 btn-sm' style={{background:'black', color:'white' }}> {'<'} </button>
-                 <div>
+                 <div class='d-flex flex-row, align-self-center' style={{}}>
+                 <div class= 'd-flex align-self-center' style={{}}>
+                    {/* Falta agregar la manera de hacerlo que solo se vean 10 botones a la vez */}
                     {Array.from({length:numberOfPages}, (_,index) => (
-                        <button class='flex-fill btn m-3 ' style={{background:'black', color:'white' }}>{index+1}</button>
+                        
+                        <button key={index} class='flex-fill btn m-3 '  style={{backgroundColor: isPressed === index ? '#55d0b6' : 'black' ,color:'white' }} onClick={() => {
+                           if (isPressed != index) {
+                            SetPressed(index)
+                           fetch(url+'students/all/' + (index+1), {
+                            method:'GET',
+                            credentials:'include',
+                          })  
+                          .then((res) => {return res.json()})
+                          .then((res) => {SetStudents(res)}) 
+                           }
+                            
+                        }}>{index+1}</button>
                     ))}
-                    {/* <button class='flex-fill btn m-3 ' style={{background:'black', color:'white' }}>1</button> */}
                  </div>
-                 <button class='flex-fill btn m-3 btn-sm' style={{background:'black', color:'white' }}>{'>'}</button>
                  </div>
                  
-                 {/* checa en este boton que no se muestre si hay menos de 20 alumnos en la lista  */}
             </main>
          )
     }

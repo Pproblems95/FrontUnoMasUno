@@ -93,7 +93,7 @@ function App() {
           </div>
           <div class='d-flex justify-content-between flex-column mx-3 '>
             <p class='text-center m h3'>Contraseña</p>
-            <input  style={{background:'white', marginRight:'10vw', opacity:'90%', }} class='rounded m-5' value={currentUser.password} placeholder='Introduce tu contraseña' onChange={e => SetUser({
+            <input  style={{background:'white', marginRight:'10vw', opacity:'90%', }} class='rounded m-5' type='password' value={currentUser.password} placeholder='Introduce tu contraseña' onChange={e => SetUser({
               ...currentUser,
               password: e.target.value
             })}/>

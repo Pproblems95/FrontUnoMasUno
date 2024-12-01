@@ -10,6 +10,7 @@ import DetallesRecibo from './DetallesRecibo.jsx'
 import Administrar from './Administrar.jsx'
 import EliminarUsuario from './EliminarUsuario.jsx'
 import AgregarUsuario from './AgregarUsuario.jsx'
+import ModificarAlumno from './ModificarAlumno.jsx'
 import './index.css'
 import { StrictMode } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
@@ -64,6 +65,10 @@ const router = createBrowserRouter([
   {
     path: '/menu/Administrar/AgregarUsuario',
     element: <AgregarUsuario/>
+  },
+  {
+    path:'menu/Alumnos/:IdAlumno/Modificar',
+    element: <ModificarAlumno/>
   }
 ]);
 
