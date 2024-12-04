@@ -63,7 +63,7 @@ function ModificarAlumno() {
                 .then((res) => {
                     
                     SetStudent(
-                        res.body // Asignar idBranch o 0 si no se encuentra
+                        res.body 
                     );
                 })
                 .catch((e) => console.log(e))
@@ -200,7 +200,7 @@ function ModificarAlumno() {
                     </div>
                     <div className='m-4'>
                         <p className='h5 text-center'>Estado</p>
-                        <select class='form-select border border-dark  ' style={{ width:'24vw'}} name="state" value={Student.state} onChange={(e) => {SetStudent({...Student, state: e.target.value})}}>
+                        <select class='form-select border border-dark  '  name="state" value={Student.state} onChange={(e) => {SetStudent({...Student, state: e.target.value})}}>
                          {Object.keys(estados).map((llaves) => (
                             <option  key={llaves} value={llaves} >
                                 {llaves}
@@ -210,7 +210,7 @@ function ModificarAlumno() {
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5 text-center'>Ciudad</p>
-                        <select  class='form-select border border-dark  ' name="city" style={{ width:'24vw'}} value={Student.city} onChange={(e) => { SetStudent({ ...Student, city:e.target.value}) }}>
+                        <select  class='form-select border border-dark  ' name="city"  value={Student.city} onChange={(e) => { SetStudent({ ...Student, city:e.target.value}) }}>
                         {estados[Student.state].map((ciudad) => (
                             <option class='mw-25' key={ciudad} value={ciudad}>
                                 {ciudad}

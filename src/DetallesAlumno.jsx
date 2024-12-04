@@ -2,14 +2,19 @@ import { FaArrowAltCircleLeft } from "react-icons/fa";
 import logo from '../images/logonofondo.png'
 import './RegistroAlumno.css'
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState,  } from "react";
+import { Modal } from 'react-bootstrap'
 
 function DetallesAlumno() {
     const navigate = useNavigate()
     const params = useParams()
     const [data, SetData] = useState(null)
+    const [deleted, SetDeleted] = useState(null)
+    const [confirmation, SetConfirmation] = useState(false)
     const [loading, SetLoading] = useState(true)
     const [student, SetStudent] = useState(null)
+    const [isOpen, SetOpen] = useState(false)
+    const [errorMessage, SetError] = useState("¿Estás seguro de que deseas eliminar a este alumno?\nEste proceso no puede deshacerse.")
     const url = import.meta.env.VITE_URL
 
     useEffect(() => {
@@ -40,6 +45,18 @@ function DetallesAlumno() {
             SetLoading(false)
         }
     }, [student])
+    useEffect(() => {
+        if(deleted != null){
+            if(!deleted.error){
+                SetConfirmation(true)
+                SetError('Estudiante eliminado correctamente.')
+            }
+            else if (deleted.error){
+                SetConfirmation(true)
+                SetError('Hubo un error, por favor inténtalo de nuevo más tarde.')
+            }
+        }
+    }, [deleted])
 
     if(!loading){
         return(
@@ -98,12 +115,49 @@ function DetallesAlumno() {
                 </div>      
                 
             </div>
-            <button class='align-self-center btn  d-flex  m-1' style={{background:'black', color:'white'}} onClick={() => {
-                navigate('/menu/Alumnos/'+params.IdAlumno+'/Modificar')
-            }}>
-                Modificar estudiante
-            </button>
+            <div class='d-flex flex-row align-self-center'>
+            <button class=' btn  d-flex  m-1' style={{background:'black', color:'white'}} onClick={() => {
+                    navigate('/menu/Alumnos/'+params.IdAlumno+'/Modificar')
+                }}>
+                    Modificar estudiante
+                </button>
+                <button class=' btn  d-flex   m-1' style={{background:'red', color:'white'}} onClick={() => {
+                    SetOpen(true)
+                }}>
+                    Eliminar estudiante
+                </button>
+                
+            </div>
+            <Modal show={isOpen} >
+          <Modal.Header >
+            <Modal.Title> Advertencia </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>{errorMessage}</Modal.Body>
+          <Modal.Footer>
+            {!confirmation ? (<div class='d-flex flex-row mx-auto' style={{}}>
+            <button class='btn btn-lg  mx-2' style={{background:'black', color:'white'}} onClick={() => {
+              SetOpen(false)
+              }
+            }>Cancelar</button>
+            <button class='btn btn-lg ' style={{background:'red', color:'white'}} onClick={() => {
+              fetch(url+'students/'+params.IdAlumno, {
+                method:'DELETE',
+                credentials:'include',
+              }).then((res) => {return res.json()})
+              .then((res) => {SetDeleted(res)})
+              .catch((e) => console.log(e))
+              }
+            }>Eliminar</button>
+            </div>) : (<button class='btn btn-lg' style={{background:'black', color:'white'}} onClick={() => {
+                navigate('/')
+            }} >De acuerdo</button>)}
+            
+            
+          </Modal.Footer>
+        </Modal>
+            
        </main>
+       
         )
     }
 

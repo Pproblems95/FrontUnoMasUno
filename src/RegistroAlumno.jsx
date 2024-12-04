@@ -161,7 +161,7 @@ function RegistroAlumno() {
                     </div>
                     <div className='m-4'>
                         <p className='h5 text-center'>Estado</p>
-                        <select class='form-select border border-dark  ' style={{ width:'24vw'}} name="state" value={Student.state} onChange={(e) => {SetStudent({...Student, state: e.target.value})}}>
+                        <select class='form-select border border-dark  ' style={{ }} name="state" value={Student.state} onChange={(e) => {SetStudent({...Student, state: e.target.value})}}>
                          {Object.keys(estados).map((llaves) => (
                             <option  key={llaves} value={llaves} >
                                 {llaves}
@@ -171,7 +171,7 @@ function RegistroAlumno() {
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5 text-center'>Ciudad</p>
-                        <select  class='form-select border border-dark  ' name="city" style={{ width:'24vw'}} onChange={(e) => { SetStudent({ ...Student, city:e.target.value}) }}>
+                        <select  class='form-select border border-dark  ' name="city" style={{ }} onChange={(e) => { SetStudent({ ...Student, city:e.target.value}) }}>
                         {estados[Student.state].map((ciudad) => (
                             <option class='mw-25' key={ciudad} value={ciudad}>
                                 {ciudad}
