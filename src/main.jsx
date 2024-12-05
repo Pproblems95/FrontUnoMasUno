@@ -11,6 +11,8 @@ import Administrar from './Administrar.jsx'
 import EliminarUsuario from './EliminarUsuario.jsx'
 import AgregarUsuario from './AgregarUsuario.jsx'
 import ModificarAlumno from './ModificarAlumno.jsx'
+import DetallesUsuario from './DetallesUsuario.jsx'
+import ModificarUsuario from './ModificarUsuario.jsx'
 import './index.css'
 import { StrictMode } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
@@ -69,7 +71,16 @@ const router = createBrowserRouter([
   {
     path:'menu/Alumnos/:IdAlumno/Modificar',
     element: <ModificarAlumno/>
+  },
+  {
+    path:'/menu/Administrar/EliminarUsuario/:IdAlumno',
+    element: <DetallesUsuario/>
+  },
+  {
+    path:'/menu/Administrar/EliminarUsuario/:IdAlumno/Modificar',
+    element: <ModificarUsuario/>
   }
+  
 ]);
 
 
