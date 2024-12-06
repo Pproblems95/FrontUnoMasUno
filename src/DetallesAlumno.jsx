@@ -29,7 +29,7 @@ function DetallesAlumno() {
     useEffect(() => {
         if(data != null){
             if(!data.error){
-                fetch(url+'students/search/'+params.IdAlumno, {
+                fetch(url+'students/searchId/'+params.IdAlumno, {
                     method: 'GET',
                     credentials: 'include'
                 })
