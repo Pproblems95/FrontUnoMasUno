@@ -3,10 +3,14 @@ import logo from '../images/logonofondo.png'
 import './RegistroAlumno.css'
 import { useNavigate } from "react-router-dom";
 import {  useEffect, useState } from "react";
+import { Modal } from "react-bootstrap";
 
 function GenerarPago() {
     const [data, SetData] = useState(null)
     const [loading, SetLoading] = useState(true)
+    const [isOpen, SetOpen] = useState(false)
+    const [errorMessage, SetError] = useState('')
+    const [see, SetSee] = useState(false)
     const [payment, SetPayment] = useState({
         concept: '',
         amount: 0,
@@ -36,14 +40,33 @@ function GenerarPago() {
 
     useEffect(() => {
         if (confirmation !== null) {
-            if (confirmation.error) {
-                console.log('Mensaje de error aqui')
+            if(confirmation.status === 403){
+                SetError(confirmation.body)
                 return
             }
-            console.log('mensaje de exito aqui')
-
+            if (confirmation.error) {
+                SetError('Ocurrió un error, por favor inténtalo de nuevo')
+                return
+            }
+            SetError('Registro exitoso!')
         }
     }, [confirmation])
+
+    useEffect(() => {
+        if(errorMessage !== ''){
+            if(confirmation !== null){
+                if(!confirmation.error){
+                    SetSee(true)
+                }
+                else if(confirmation.error){
+                    SetSee(false)
+                }
+            }
+            SetOpen(true) 
+        }
+    }, [errorMessage])
+
+
 
 
 
@@ -106,6 +129,24 @@ function GenerarPago() {
                 }}>Registrar</button>
 
             </div>
+            <Modal show={isOpen} >
+          <Modal.Header >
+            <Modal.Title> Advertencia </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>{errorMessage}</Modal.Body>
+          <Modal.Footer>
+            <div class='d-flex flex-row align-self-end'>
+                <button class='btn btn-lg mx-1' style={{background:'black', color:'white'}} onClick={() => {
+                    SetOpen(false)
+                }}>Cerrar</button>
+                {see ? (<button class='btn btn-lg mx-1 ' style={{background:'#55d0b6', color:'black'}} onClick={() => {
+                    SetOpen(false)
+                }}>Ver pago</button>) : (<></>)}
+                
+            </div>
+           
+          </Modal.Footer>
+        </Modal>
        </main>
     )
 }

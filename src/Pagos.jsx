@@ -29,7 +29,9 @@ function Pagos(){
                 }}>Registrar Pago</button>
             </div>
           </div>
-          <div class='align-items-center d-flex flex-fill justify-content-center flex-column'>
+          <div class='align-items-center d-flex flex-fill justify-content-center flex-column' onClick={() => {
+            navigate('/menu/Administrar/HistorialPagos')
+          }}>
             <button style={{borderWidth:0, background:'transparent'}} onClick={() => {
                 console.log('h')
             }}>
@@ -37,8 +39,11 @@ function Pagos(){
                 
             </button>
             <div>
-                <button class='h2  btn btn-lg' style={{background:'black', color:'white', borderRadius:5}}>Ver historial</button>
+                <button class='h2  btn btn-lg' style={{background:'black', color:'white', borderRadius:5}} onClick={() => {
+                    
+                }}>Ver historial</button>
             </div>
+            
           </div>
         </div>
    </main>

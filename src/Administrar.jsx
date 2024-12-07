@@ -85,6 +85,18 @@ function Administrar() {
             <div>
             </div>
           </div>
+          <div style={{}} class=' d-flex justify-content-center align-items-center flex-fill flex-row'>
+            <button  class='align-self-center rounded my-1'style={{borderWidth:0, background:'black'}} onClick={() => {
+                navigate('/menu/Administrar/Sucursales')
+            }}>
+                <div class='flex-row d-flex'>
+                    <FaUserCircle class='rounded-circle m-3' style={{height:'10vh', width:'20vw', background:'white'}} />
+                    <p class='align-self-center h3' style={{ color:'white'}}>Ver sucursales</p>
+                </div>
+            </button>
+            <div>
+            </div>
+          </div>
 
         </div>
    </main>

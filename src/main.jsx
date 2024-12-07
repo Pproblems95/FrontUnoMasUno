@@ -13,6 +13,8 @@ import AgregarUsuario from './AgregarUsuario.jsx'
 import ModificarAlumno from './ModificarAlumno.jsx'
 import DetallesUsuario from './DetallesUsuario.jsx'
 import ModificarUsuario from './ModificarUsuario.jsx'
+import HistorialPagos from './HistorialPagos.jsx'
+import Sucursales from './Sucursales.jsx'
 import './index.css'
 import { StrictMode } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
@@ -79,6 +81,14 @@ const router = createBrowserRouter([
   {
     path:'/menu/Administrar/EliminarUsuario/:IdAlumno/Modificar',
     element: <ModificarUsuario/>
+  },
+  {
+    path:'/menu/Administrar/HistorialPagos',
+    element: <HistorialPagos/>
+  },
+  {
+    path:'/menu/Administrar/Sucursales',
+    element: <Sucursales/>
   }
   
 ]);
