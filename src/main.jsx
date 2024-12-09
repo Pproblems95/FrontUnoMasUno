@@ -15,6 +15,9 @@ import DetallesUsuario from './DetallesUsuario.jsx'
 import ModificarUsuario from './ModificarUsuario.jsx'
 import HistorialPagos from './HistorialPagos.jsx'
 import Sucursales from './Sucursales.jsx'
+import DetallesSucursal from './DetallesSucursal.jsx'
+import ModificarSucursal from './ModificarSucursal.jsx'
+import RegistroSucursal from './RegistroSucursal.jsx'
 import './index.css'
 import { StrictMode } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
@@ -89,6 +92,18 @@ const router = createBrowserRouter([
   {
     path:'/menu/Administrar/Sucursales',
     element: <Sucursales/>
+  },
+  {
+    path:'/menu/Administrar/Sucursales/:idSucursal',
+    element: <DetallesSucursal/>
+  },
+  {
+    path:'/menu/Administrar/Sucursales/:idSucursal/Modificar',
+    element: <ModificarSucursal/>
+  },
+  {
+    path:'/menu/Administrar/RegistroSucursal/',
+    element: <RegistroSucursal/>
   }
   
 ]);

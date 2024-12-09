@@ -24,7 +24,7 @@ function Item(props){
                     <div class='align-content-center ' style={{}}> 
                     <button class='flex-fill btn align-self-center' style={{background:'black', color:'white', marginTop:'0.5vh' }} onClick={()=>
                     
-                    navigate('/menu/Administrar/EliminarUsuario/'+props.id)
+                    navigate('/menu/Administrar/Sucursales/'+props.id)
                         
                     } >Ver más</button>
                     </div>
@@ -42,7 +42,7 @@ function Sucursales() {
     const [usersList, SetUsersList] = useState([])
     const [isPressed, SetPressed] = useState(0)
     const [users, SetUsers] = useState(null)
-    const [loading, SetLoading] = useState(false)
+    const [loading, SetLoading] = useState(true)
     const url = import.meta.env.VITE_URL
 
     useEffect(() => {
@@ -83,47 +83,55 @@ function Sucursales() {
                 return compared
             })
             SetUsersList(sortedUsers)
+            SetLoading(false)
         }
     }, [users])
     
     const navigate = useNavigate()
-    return(
-       <main  class='d-flex flex-column'>
-            <div class='d-flex flex-row container-fluid justify-content-between ' style={{background:'#55d0b6'}}>
-                <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
-                    navigate('../menu/Administrar')
-                }} />
-                <p class='h3 align-self-center ' >Sucursales</p>
-                <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
-            </div>
-            <div style={{ }} class='d-flex flex-grow-1  m-1 flex-column ' >
-            
-                
-            <ul style={{listStyle:'none', padding:0, margin:0}}>
-            {usersList.map((data) => <Item key={data.id}  country={data.country} name={data.name} id={data.id}> </Item>)}
-            </ul>
-            </div>
-            <div class= 'd-flex align-self-center' style={{}}>
-                    {/* Falta agregar la manera de hacerlo que solo se vean 10 botones a la vez */}
-                    {Array.from({length:numberOfPages}, (_,index) => (
-                        
-                        <button key={index} class='flex-fill btn m-3 '  style={{backgroundColor: isPressed === index ? '#55d0b6' : 'black' ,color:'white' }} onClick={() => {
-                           if (isPressed != index) {
-                            SetPressed(index)
-                            fetch(url+'branches/all/'+(isPressed+1), {
-                                method:'GET',
-                                credentials:'include'
-                            })
-                            .then((res) => {return res.json()})
-                            .then((res) => {SetUsers(res)})
-                            .catch((e) => {console.log(e)})
-                           }
-                            
-                        }}>{index+1}</button>
-                    ))}
+
+    if(loading){
+        (<p class='h1'>Cargando sucursales... </p>)
+    }
+    else if (!loading){
+        return(
+            <main  class='d-flex flex-column'>
+                 <div class='d-flex flex-row container-fluid justify-content-between ' style={{background:'#55d0b6'}}>
+                     <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
+                         navigate('../menu/Administrar')
+                     }} />
+                     <p class='h3 align-self-center ' >Sucursales</p>
+                     <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
                  </div>
-       </main>
-    )
+                 <div style={{ }} class='d-flex flex-grow-1  m-1 flex-column ' >
+                 
+                     
+                 <ul style={{listStyle:'none', padding:0, margin:0}}>
+                 {usersList.map((data) => <Item key={data.id}  country={data.country} name={data.name} id={data.id}> </Item>)}
+                 </ul>
+                 </div>
+                 <div class= 'd-flex align-self-center' style={{}}>
+                         {/* Falta agregar la manera de hacerlo que solo se vean 10 botones a la vez */}
+                         {Array.from({length:numberOfPages}, (_,index) => (
+                             
+                             <button key={index} class='flex-fill btn m-3 '  style={{backgroundColor: isPressed === index ? '#55d0b6' : 'black' ,color:'white' }} onClick={() => {
+                                if (isPressed != index) {
+                                 SetPressed(index)
+                                 fetch(url+'branches/all/'+(isPressed+1), {
+                                     method:'GET',
+                                     credentials:'include'
+                                 })
+                                 .then((res) => {return res.json()})
+                                 .then((res) => {SetUsers(res)})
+                                 .catch((e) => {console.log(e)})
+                                }
+                                 
+                             }}>{index+1}</button>
+                         ))}
+                      </div>
+            </main>
+         )
+    }
+    
 }
 
 export default Sucursales
