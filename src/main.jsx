@@ -18,7 +18,10 @@ import Sucursales from './Sucursales.jsx'
 import DetallesSucursal from './DetallesSucursal.jsx'
 import ModificarSucursal from './ModificarSucursal.jsx'
 import RegistroSucursal from './RegistroSucursal.jsx'
-import './index.css'
+import RegistroGasto from './RegistroGasto.jsx'
+import HistorialGastos from './HistorialGastos.jsx'
+import DetallesGasto from './DetallesGasto.jsx'
+import Cortes from './Cortes.jsx'
 import { StrictMode } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import RegistroAlumno from './RegistroAlumno.jsx'
@@ -50,7 +53,7 @@ const router = createBrowserRouter([
     element: <DetallesAlumno/>
   },
   {
-    path:'/menu/Pagos',
+    path:'/menu/:Pagos',
     element: <Pagos/>
   },
   {
@@ -104,6 +107,22 @@ const router = createBrowserRouter([
   {
     path:'/menu/Administrar/RegistroSucursal/',
     element: <RegistroSucursal/>
+  },
+  {
+    path:'/menu/Pagos/RegistroPago',
+    element: <RegistroGasto/>
+  },
+  {
+    path:'/menu/Pagos/HistorialGastos',
+    element: <HistorialGastos/>
+  },
+  {
+    path:'/menu/Pagos/HistorialGastos/:idRecibo',
+    element: <DetallesGasto/>
+  },
+  {
+    path:'/menu/Administrar/Cortes',
+    element: <Cortes/>
   }
   
 ]);

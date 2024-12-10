@@ -36,7 +36,7 @@ function Menu() {
         } 
        }    
 
-    },[loading])
+    },[data])
     useEffect(() => {
         if(data != null && data.body.type === 'admin'){
             SetAdmin(true)
@@ -82,6 +82,9 @@ function Menu() {
                         <Button class=' btn' style={{background:'black', marginTop:'10%'}} type='button' onClick={() => {
                             navigate('/menu/Pagos')
                         }} >Pagos</Button>
+                         <Button class=' btn' style={{background:'black', marginTop:'10%'}} type='button' onClick={() => {
+                            navigate('/menu/Gastos')
+                        }} >Gastos</Button>
                         <Button class=' btn' style={{background:'black', marginTop:'10%'}} type='button' onClick={() => {
                             fetch(url+'auth/logout', {
                                 method: 'DELETE',

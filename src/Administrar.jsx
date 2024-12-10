@@ -4,6 +4,7 @@ import { TbReportMoney } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
+import { MdOutlineAttachMoney } from "react-icons/md";
 import { FaUserAltSlash } from "react-icons/fa";
 import { PiBuildingOffice } from "react-icons/pi";
 import { useEffect, useState } from "react";
@@ -101,11 +102,20 @@ function Administrar() {
           <p className="h5 text-white mt-3">Registrar sucursal</p>
         </button>
       </div>
+      <div className="col-12 col-md-6 col-lg-4 p-2">
+        <button
+          className="btn btn-dark w-100 h-100 d-flex flex-column align-items-center justify-content-center"
+          onClick={() => navigate('/menu/Administrar/Cortes')}
+        >
+          <MdOutlineAttachMoney className="rounded-circle" style={{ height: '10vh', width: '10vh', background: 'white', color:'black' }} />
+          <p className="h5 text-white mt-3">Cortes</p>
+        </button>
+      </div>
     </div>
   </div>
 </main>
 
-    )
+  )
 }
 
 export default Administrar
