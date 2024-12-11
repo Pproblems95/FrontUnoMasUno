@@ -145,6 +145,7 @@ function RegistroGasto() {
                <Modal.Footer>
                  <button class='btn btn-lg  align-self-center' style={{background:'black', color:'white'}} onClick={() => {
                    SetOpen(false)
+                   SetError('')
                    if(confirmation !== null){
                     if(!confirmation.error){
                         location.reload()

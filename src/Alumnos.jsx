@@ -47,7 +47,10 @@ function Alumnos(){
     const [loading, SetLoading] = useState(true)
     const [data, SetData] = useState(null)
     const [students, SetStudents] = useState(null)
+    const [search, SetSearch] = useState('')
     const [studentsList, SetStudentsList] = useState([])
+    const [suggestions, SetSuggestions] = useState({ error: false, status: null, body: [] });
+    const [suggestionsRes, SetSuggestionsRes] = useState({ error: false, status: null, body: [] });
     useEffect(() => {
         fetch(url+'auth/check', {
             method: 'GET',
@@ -93,6 +96,18 @@ function Alumnos(){
             
 
         }}, [students])
+    
+        useEffect(() => {
+            if(suggestionsRes.status === 404){
+                SetSuggestions({...suggestions, body:['No hay coincidencias']})
+                return
+            }
+            if(suggestionsRes.error){
+                SetSuggestions({...suggestions, body:['Hubo un error inesperado']})
+                return
+            }
+            SetSuggestions(suggestionsRes)
+        }, [suggestionsRes]);
   
 
     const url = import.meta.env.VITE_URL
@@ -107,6 +122,65 @@ function Alumnos(){
                      <p class='h3 align-self-center ' >Lista de alumnos</p>
                      <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
                  </div>
+
+                 <div class='d-flex flex-column justify-content-center my-2'>
+                    <p class='h4 text-center'>Búsqueda por nombre</p>
+                    <input class='input align-self-center' value={search} onChange={(e) => {
+                        SetSearch(e.target.value)
+                        if(search.length < 3){
+                            return
+                        }
+                        fetch(url+'students/searchName/'+search.replace(/ /g, '-'), {
+                            method:'GET',
+                            credentials:'include'
+                        })
+                        .then((res) => { return res.json()})
+                        .then((res) => {SetSuggestionsRes(res)})
+                        .catch((e) => {console.log(e)})
+                    }}/>
+                    {suggestions && suggestions.body && suggestions.body.length > 0 && search.length >= 3 && (
+    <ul
+        className="list-group position-absolute w-100 mt-5 align-self-center "
+        style={{ zIndex: 1000, maxHeight: '200px', overflowY: 'auto', overflowX:'hidden', top:'20vh', color:'blue'}}
+    >
+        {suggestions.body.map((student, index) =>
+            typeof student === "string" ? ( // Verifica si el elemento es un mensaje
+                <li
+                    key={index}
+                    className="list-group-item list-group-item-secondary "
+                    style={{ cursor: "default", color: "gray" }}
+                >
+                    {student}
+                </li>
+            ) : ( // Si no, asume que es un objeto de sugerencia
+                <li
+                    key={student.id}
+                    className="list-group-item list-group-item-action "
+                    onClick={() => {
+                        navigate('/menu/Alumnos/'+student.id)
+                        SetSuggestions(null); // Ocultar sugerencias al seleccionar
+                    }}
+                    style={{ cursor: "pointer",
+                        color:'black',
+                        background:'#ccfff5'
+                     }}
+                >
+                    <div class='d-flex flex-row justify-content-between'>
+                        {student.name}
+                        <button class=' btn ' style={{background:'black', color:'white', marginTop:'0.5vh' }} onClick={()=>
+                    
+                    navigate('/menu/Alumnos/'+student.id)
+                        
+                    } >Ver más</button>
+                    </div>
+                    
+                </li>
+            )
+        )}
+    </ul>
+)}
+                    
+                 </div>
                  <div style={{ }} class='d-flex flex-grow-1  m-1 flex-column ' >
                  <ul style={{listStyle:'none', padding:0, margin:0}}>
                     
@@ -115,24 +189,38 @@ function Alumnos(){
                 </ul>
                  </div>
                  <div class='d-flex flex-row, align-self-center' style={{}}>
-                 <div class= 'd-flex align-self-center' style={{}}>
-                    {/* Falta agregar la manera de hacerlo que solo se vean 10 botones a la vez */}
-                    {Array.from({length:numberOfPages}, (_,index) => (
-                        
-                        <button key={index} class='flex-fill btn m-3 '  style={{backgroundColor: isPressed === index ? '#55d0b6' : 'black' ,color:'white' }} onClick={() => {
-                           if (isPressed != index) {
-                            SetPressed(index)
-                           fetch(url+'students/all/' + (index+1), {
-                            method:'GET',
-                            credentials:'include',
-                          })  
-                          .then((res) => {return res.json()})
-                          .then((res) => {SetStudents(res)}) 
-                           }
-                            
-                        }}>{index+1}</button>
-                    ))}
-                 </div>
+                 <div className="d-flex align-self-center">
+    {Array.from({ length: numberOfPages }, (_, index) => index + 1)
+        .slice(
+            Math.max(0, isPressed - 5), 
+            Math.min(numberOfPages, isPressed + 5) 
+        )
+        .map((page) => (
+            <button
+                key={page}
+                className="flex-fill btn m-3"
+                style={{
+                    backgroundColor: isPressed + 1 === page ? "#55d0b6" : "black",
+                    color: "white",
+                }}
+                onClick={() => {
+                    if (isPressed + 1 !== page) {
+                        SetPressed(page - 1);
+                        fetch(url + "students/all/" + page, {
+                            method: "GET",
+                            credentials: "include",
+                        })
+                            .then((res) => res.json())
+                            .then((res) => {
+                                SetStudents(res);
+                            });
+                    }
+                }}
+            >
+                {page}
+            </button>
+        ))}
+</div>
                  </div>
                  
             </main>

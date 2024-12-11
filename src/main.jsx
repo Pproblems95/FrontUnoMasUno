@@ -109,7 +109,7 @@ const router = createBrowserRouter([
     element: <RegistroSucursal/>
   },
   {
-    path:'/menu/Pagos/RegistroPago',
+    path:'/menu/Pagos/RegistroGasto',
     element: <RegistroGasto/>
   },
   {

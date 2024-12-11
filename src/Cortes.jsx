@@ -12,7 +12,7 @@ function Cortes(){
         paymentTotal: 0,
         expenditureTotal: 0,
         balance: 0,
-        payments: [ // preguntarle a chatgpt si esta estructura esta correcta si quiero que se almacene todos en un solo objeto o si solo se guardaria uno solo
+        payments: [ 
         ],
         expenditures: [
         ]
@@ -25,7 +25,7 @@ function Cortes(){
 
     const years = []
     const currentYear = new Date().getFullYear()
-    for (let year = 2024; year <= currentYear; year++) {
+    for (let year = 2020; year <= currentYear; year++) {
         years.push(year.toString())
     }
     const monthes = {

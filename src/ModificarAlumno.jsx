@@ -55,7 +55,7 @@ function ModificarAlumno() {
                 .then((res) => {return res.json()})
                 .then(res => SetBranches(res.body.branches))
 
-                fetch(url+'students/search/'+params.IdAlumno, {
+                fetch(url+'students/searchId/'+params.IdAlumno, {
                     method: 'GET',
                     credentials: 'include'
                 })
