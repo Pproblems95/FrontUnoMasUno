@@ -110,13 +110,19 @@ function DetallesUsuario() {
                 }}>
                     Modificar usuario
                 </button>
-                <button class=' btn  d-flex   m-1' style={{background:'red', color:'white'}} onClick={() => {
+                <button class=' btn  d-flex   m-1' style={{background:'#55d0b6', color:'black'}} onClick={() => {
+                    navigate('/menu/Administrar/EliminarUsuario/'+params.IdAlumno+'/ModificarContraseña')
+                }}>
+                    Modificar contraseña
+                </button>
+                
+                
+            </div>
+            <button class=' btn  d-flex align-self-center justify-content-center align-items-center my-3  m-1' style={{background:'red', color:'white'}} onClick={() => {
                     SetOpen(true)
                 }}>
                     Eliminar usuario
                 </button>
-                
-            </div>
             <Modal show={isOpen} >
           <Modal.Header >
             <Modal.Title> Advertencia </Modal.Title>

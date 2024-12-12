@@ -11,6 +11,7 @@ function AgregarUsuario() {
     const [errorMessage, SetError] = useState('')
     const [data, SetData] = useState(null)
     const [loading, SetLoading] = useState(true)
+    const [pass, SetPass] = useState('')
     const [confirmation, SetConfirmation] = useState(null)
     const [user, SetUser] = useState({
         username: "",
@@ -19,7 +20,7 @@ function AgregarUsuario() {
         patLastName: "",
         matLastName: "",
         phone: "",
-        type: "",
+        type: "admin",
         commission: 0
     })
     const types = ['admin', 'general', 'independiente']
@@ -59,8 +60,8 @@ function AgregarUsuario() {
 
     useEffect(() => {
         if(confirmation != null){
-            if(confirmation.error){
-                SetError('Ocurrió un error, por favor inténtalo de nuevo más tarde.')
+            if(confirmation.error){ 
+                SetError(confirmation.body)
                 return
             }
             else if (confirmation.body === 'El nombre de usuario ya existe'){
@@ -87,9 +88,18 @@ function AgregarUsuario() {
                  <div class='d-flex align-self-center'>
                      <form  action={'${url}auth/signup/'} method="POST" onSubmit={(e) => {
                          e.preventDefault()
+                         if(pass !== user.password){
+                            SetError('Las contraseñas no coinciden')
+                            return
+                         }
+
+                         if(user.commission < 0 || user.commission > 99.99){
+                            SetError('La comisión tiene que ser un número entre 0 y 99.99')
+                            return
+                         }
      
                          const isValid = Object.entries(user).filter(([key, value]) => {
-                             if(typeof value === 'number'){
+                             if(key === 'commission'){
                                  return false
                              }
                              return value.length < 3
@@ -124,10 +134,14 @@ function AgregarUsuario() {
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
                              <p className='h5'>Contraseña</p>
-                             <input className="inputs" required type="text" name='password' value={user.password} onChange={(e) => {SetUser({
+                             <input className="inputs" required type="password" name='password' value={user.password} onChange={(e) => {SetUser({
                                  ...user,
                                  password:e.target.value
                              })}}/>
+                     </div>
+                     <div className='m-4 align-items-center d-flex flex-column'>
+                             <p className='h5'>Confirmar contraseña</p>
+                             <input className="inputs" required type="password"  value={pass} onChange={(e) => {SetPass(e.target.value)}}/>
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
                              <p className='h5'>Nombre</p>
@@ -189,6 +203,7 @@ function AgregarUsuario() {
                <Modal.Footer>
                  <button class='btn btn-lg ' style={{background:'black', color:'white'}} onClick={() => {
                    SetOpen(false)
+                   SetError('')
                    if(!confirmation.error){
                      location.reload()
                    }

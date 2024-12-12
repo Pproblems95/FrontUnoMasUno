@@ -46,6 +46,38 @@ function HistorialPagos() {
     const [loading, SetLoading] = useState(false)
     const url = import.meta.env.VITE_URL
 
+    const [limit, SetLimit] = useState(0)
+    const [UppperLimit, SetUpper] = useState(0)
+    const [show, SetShow] = useState({
+        beginning: false,
+        ending: false
+    })
+    
+    useEffect(() => {
+        if(numberOfPages <=  5){
+            SetShow({beginning:false, ending:false})
+            SetUpper(5)
+        }
+        else if(isPressed <= 5){
+            SetShow({beginning:false, ending:true})
+            SetUpper(10)
+            SetLimit(0)
+            return
+        }
+        else if(isPressed >= 5 && numberOfPages - isPressed >= 5){
+            SetShow({beginning:true, ending:true})
+            SetUpper(isPressed + 5)
+            SetLimit(isPressed - 5)
+            return
+        }
+        else if (isPressed + 5 > numberOfPages){
+            SetShow({beginning:true, ending:false})
+            SetUpper(numberOfPages)
+            SetLimit(numberOfPages-10)
+        }
+        
+    },[isPressed, numberOfPages])
+
     useEffect(() => {
         fetch(url+'auth/check', {
             method: 'GET',
@@ -101,25 +133,60 @@ function HistorialPagos() {
             {usersList.map((data) => <Item key={data.id} concept={data.concept} date={data.date} id={data.id}> </Item>)}
             </ul>
             </div>
-            <div class= 'd-flex align-self-center' style={{}}>
-                    {/* Falta agregar la manera de hacerlo que solo se vean 10 botones a la vez */}
-                    {Array.from({length:numberOfPages}, (_,index) => (
-                        
-                        <button key={index} class='flex-fill btn m-3 '  style={{backgroundColor: isPressed === index ? '#55d0b6' : 'black' ,color:'white' }} onClick={() => {
-                           if (isPressed != index) {
-                            SetPressed(index)
-                            fetch(url+'payments/all/'+(isPressed+1), {
-                                method:'GET',
-                                credentials:'include'
-                            })
-                            .then((res) => {return res.json()})
-                            .then((res) => {SetUsers(res)})
-                            .catch((e) => {console.log(e)})
-                           }
-                            
-                        }}>{index+1}</button>
-                    ))}
-                 </div>
+            <div className="d-flex flex-wrap justify-content-center overflow-auto">
+                    {show.beginning ? (<button onClick={() => {
+                        SetPressed(0)
+                        fetch(url + "payments/all/1"  , {
+                            method: "GET",
+                            credentials: "include",
+                        })
+                            .then((res) => res.json())
+                            .then((res) => {
+                                SetUsers(res);
+                            });
+                    }} className="btn btn-dark m-2" style={{background:'black', color:'white'}}>Ir al inicio</button>)
+                    : (<></>)}
+    {Array.from({ length: numberOfPages }, (_, index) => index + 1)
+        .slice(limit, UppperLimit)
+        .map((page) => (
+            <button
+                key={page}
+                className="btn btn-dark m-2"
+                style={{
+                    backgroundColor: isPressed + 1 === page ? "#55d0b6" : "black",
+                    color: "white",
+                }}
+                onClick={() => {
+                    if (isPressed + 1 !== page) {
+                        SetPressed(page - 1);
+                        fetch(url + "payments/all/" + page, {
+                            method: "GET",
+                            credentials: "include",
+                        })
+                            .then((res) => res.json())
+                            .then((res) => {
+                                SetUsers(res);
+                            });
+                    }
+                }}
+            >
+                {page}
+            </button>
+        ))}
+        {show.ending ? (<button onClick={() => {
+            SetPressed(numberOfPages-1)
+            fetch(url + "payments/all/" + numberOfPages, {
+                method: "GET",
+                credentials: "include",
+            })
+                .then((res) => res.json())
+                .then((res) => {
+                    SetUsers(res);
+                });
+
+        }} className="btn btn-dark m-2" style={{background:'black', color:'white'}}>Ir al final</button>)
+                    : (<></>)}
+</div>
        </main>
     )
 }

@@ -51,6 +51,12 @@ function Alumnos(){
     const [studentsList, SetStudentsList] = useState([])
     const [suggestions, SetSuggestions] = useState({ error: false, status: null, body: [] });
     const [suggestionsRes, SetSuggestionsRes] = useState({ error: false, status: null, body: [] });
+    const [limit, SetLimit] = useState(0)
+    const [UppperLimit, SetUpper] = useState(0)
+    const [show, SetShow] = useState({
+        beginning: false,
+        ending: false
+    })
     useEffect(() => {
         fetch(url+'auth/check', {
             method: 'GET',
@@ -108,6 +114,36 @@ function Alumnos(){
             }
             SetSuggestions(suggestionsRes)
         }, [suggestionsRes]);
+
+        useEffect(() => {
+            if(numberOfPages <=  5){
+                SetShow({beginning:false, ending:false})
+                SetUpper(5)
+            }
+            else if(isPressed <= 5){
+                SetShow({beginning:false, ending:true})
+                SetUpper(10)
+                SetLimit(0)
+                return
+            }
+            else if(isPressed >= 5 && numberOfPages - isPressed >= 5){
+                SetShow({beginning:true, ending:true})
+                SetUpper(isPressed + 5)
+                SetLimit(isPressed - 5)
+                return
+            }
+            else if (isPressed + 5 > numberOfPages){
+                SetShow({beginning:true, ending:false})
+                SetUpper(numberOfPages)
+                SetLimit(numberOfPages-10)
+            }
+            
+        },[isPressed, numberOfPages])
+
+        useEffect(() => {console.log('Final: '+ UppperLimit) 
+            console.log('numberofPagoes ' + numberOfPages)}, [UppperLimit])
+        useEffect(() => {console.log('inicio: ' + limit)}, [limit])
+
   
 
     const url = import.meta.env.VITE_URL
@@ -189,16 +225,25 @@ function Alumnos(){
                 </ul>
                  </div>
                  <div class='d-flex flex-row, align-self-center' style={{}}>
-                 <div className="d-flex align-self-center">
+                 <div className="d-flex flex-wrap justify-content-center overflow-auto">
+                    {show.beginning ? (<button onClick={() => {
+                        SetPressed(0)
+                        fetch(url + "students/all/1"  , {
+                            method: "GET",
+                            credentials: "include",
+                        })
+                            .then((res) => res.json())
+                            .then((res) => {
+                                SetStudents(res);
+                            });
+                    }} className="btn btn-dark m-2" style={{background:'black', color:'white'}}>Ir al inicio</button>)
+                    : (<></>)}
     {Array.from({ length: numberOfPages }, (_, index) => index + 1)
-        .slice(
-            Math.max(0, isPressed - 5), 
-            Math.min(numberOfPages, isPressed + 5) 
-        )
+        .slice(limit, UppperLimit)
         .map((page) => (
             <button
                 key={page}
-                className="flex-fill btn m-3"
+                className="btn btn-dark m-2"
                 style={{
                     backgroundColor: isPressed + 1 === page ? "#55d0b6" : "black",
                     color: "white",
@@ -220,6 +265,19 @@ function Alumnos(){
                 {page}
             </button>
         ))}
+        {show.ending ? (<button onClick={() => {
+            SetPressed(numberOfPages-1)
+            fetch(url + "students/all/" + numberOfPages, {
+                method: "GET",
+                credentials: "include",
+            })
+                .then((res) => res.json())
+                .then((res) => {
+                    SetStudents(res);
+                });
+
+        }} className="btn btn-dark m-2" style={{background:'black', color:'white'}}>Ir al final</button>)
+                    : (<></>)}
 </div>
                  </div>
                  

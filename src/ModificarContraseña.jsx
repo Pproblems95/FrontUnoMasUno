@@ -1,27 +1,23 @@
 import { FaArrowAltCircleLeft } from "react-icons/fa";
 import logo from '../images/logonofondo.png'
 import './RegistroAlumno.css'
-import { useNavigate, useParams } from "react-router-dom";
+import { json, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Modal } from 'react-bootstrap'
 
-function ModificarUsuario() {
+function ModificarContraseña() {
     let isValid = []
     const [Student, SetStudent] = useState({
-       name: '',
-        patLastName: "",
-        matLastName: "",
-        phone: "",
-        username: "",
-        type: "",
-        commission: 0
+       adminPassword: '',
+       newPass: '',
+       newPassCon: ''
     })
     const [data, SetData] = useState(null)
     const types = ['admin', 'general', 'independiente']
     const [loading, SetLoading] = useState(true)
     const [isOpen, SetOpen] = useState(false)
-    const [errorMessage, setError] = useState('Usuario registrado correctamente. Presiona para regresar al menú.')
-    const [confirmation, SetConfirmation] = useState(true)
+    const [errorMessage, setError] = useState('')
+    const [confirmation, SetConfirmation] = useState(null)
     const params = useParams()
     const url = import.meta.env.VITE_URL
     useEffect(() => {
@@ -38,18 +34,6 @@ function ModificarUsuario() {
             if(!data.error){
                 console.log('ta logueado')
 
-                fetch(url+'users/search/'+params.IdAlumno, {
-                    method: 'GET',
-                    credentials: 'include'
-                })
-                .then((res) => {return res.json()})
-                .then((res) => {
-                    
-                    SetStudent(
-                        res.body 
-                    );
-                })
-                .catch((e) => console.log(e))
             }
             else{
                 console.log('login fallido')
@@ -59,10 +43,18 @@ function ModificarUsuario() {
     }, [data])
 
     useEffect(() => {
-        if(!confirmation){
-            setError('Usuario modificado correctamente. Presiona para regresar al menú.')
-            SetOpen(true)
+        if(confirmation !== null){
+            if(!confirmation.error){
+                setError('Usuario modificado correctamente. Presiona para regresar al menú.')
+            }
+            else if(confirmation.error){
+                setError(confirmation.body)
+            }
+            else {
+                setError('Ocurrió un error inesperado. Por favor inténtalo más tarde.')
+            }
         }
+        
     },[confirmation])
 
     useEffect(() => {
@@ -72,6 +64,12 @@ function ModificarUsuario() {
         }
         console.log(Student)
     }, [Student])
+
+    useEffect(() => {
+        if(errorMessage !== ''){
+            SetOpen(true)
+        }
+    }, [errorMessage])
     
     
     
@@ -89,7 +87,7 @@ function ModificarUsuario() {
             <main  class='d-flex flex-column'>
                  <div class='d-flex flex-row container-fluid justify-content-between ' style={{background:'#55d0b6'}}>
                      <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
-                         navigate('/menu/Administrar/EliminarUsuario')
+                         navigate('/menu/Administrar/EliminarUsuario/'+params.IdAlumno)
                      }} />
                      <p class='h3 align-self-center ' onClick={() => {
                      }} >Modificar usuario</p>
@@ -99,65 +97,55 @@ function ModificarUsuario() {
                      <form style={{}} class='align-items-center d-flex flex-column' action={'${url}students'} method="POST" onSubmit={(e) => {
                         
                         e.preventDefault();
-                        
+
                         isValid = Object.entries(Student).filter(([key, value]) => {
-                            if (typeof value === 'number') {
-                                return false;
+                            if(value.length < 3){
+                                return true
                             }
-                            return value.length < 3;
-                        });
-                       
-                        if(isValid.length > 0){
-                            const invalidFields = isValid.map(([key]) => key).join(', ');
-                            SetConfirmation(true)
-                            setError('Todos los campos deben tener de 3 a 20 caracteres. '+ invalidFields) //fix sign
-                            SetOpen(true)
+                        })
+
+                        if(isValid.length > 0 ){
+                            setError('Favor de llenar todos los campos con, por lo menos, 3 caracteres.')
                             return
                         }
-                        else{
-                            const formData = new FormData(e.target)
-                            const payload = JSON.stringify(Object.fromEntries(formData))
-                            console.log(payload)
-                            fetch(url+'users/'+params.IdAlumno, {
-                                method:'PUT',
-                                credentials:'include',
-                                headers: {
-                                    'content-type': 'application/json'
-                                  },
-                                body: payload,
-                                
+                        
+                        fetch(url+'auth/changepassword/'+params.IdAlumno, {
+                            credentials: 'include',
+                            method:'PUT',
+                            headers: {
+                                'content-type': 'application/json'
+                              },
+                            body: JSON.stringify({
+                                "password": Student.adminPassword,
+                                "newPassword": Student.newPass
                             })
-                            .then((res) => {return res.json()})
-                            .then((res) => {SetConfirmation(res.error)})
-                           
-                        }
-
+                        }).then((res) => {return res.json()})
+                        .then((res) => {SetConfirmation(res)})
+                        .catch((e) => {console.log(e)})
+                        
                      }}>
-                     <div class='m-4 '>
-                         <p class='h5'>Nombre</p>
-                         <input className="inputs" required type="text" name="name" id="name" value={Student.name} onChange={(e) => {SetStudent({
+                     <div class='m-4  d-flex flex-column align-self-center'>
+                         <p class='h5'>Contraseña del administrador</p>
+                         <input className="inputs align-self-center" required type="text" name="name" id="name" value={Student.adminPassword} onChange={(e) => {SetStudent({
                             ...Student,
-                            name: e.target.value
+                            adminPassword: e.target.value
                          })}}/>
                      </div>
-                     <div class='m-4 '>
-                         <p class='h5 text-center'>Apellido paterno</p>
-                         <input className="inputs" required type="text" name='patLastName' value={Student.patLastName} onChange={(e) => {SetStudent({
+                     <div class='m-4  d-flex flex-column align-self-center'>
+                         <p class='h5 text-center'>Nueva contraseña</p>
+                         <input className="inputs align.-self-center" required type="text" name='patLastName' value={Student.newPass} onChange={(e) => {SetStudent({
                             ...Student,
-                            patLastName: e.target.value
+                            newPass: e.target.value
                          })}}/>
                      </div>
-                     <div class='m-4 '>
-                         <p class='h5 text-center'>Apellido materno</p>
-                         <input className="inputs" required type="text" name='matLastName' value={Student.matLastName} onChange={(e) => {SetStudent({
+                     <div class='m-4  d-flex flex-column align-self-center '>
+                         <p class='h5 text-center'>Confirmar nueva contraseña</p>
+                         <input className="inputs align-self-center" required type="text" name='matLastName' value={Student.newPassCon} onChange={(e) => {SetStudent({
                             ...Student,
-                            matLastName: e.target.value
+                            newPassCon: e.target.value
                          })}}/>
                      </div>
-                    <div className='m-4 align-items-center flex-column d-flex'>
-                        <p className='h5'>Teléfono</p>
-                        <input className="inputs" type='tel' required name='phone' value={Student.phone} onChange={(e) => { SetStudent({...Student, phone: e.target.value}) }} />
-                    </div>
+                   
                     {/* <div className='m-4 align-items-center d-flex flex-column'>
                              <p className='h5'>Tipo de usuario</p>
                              <select class='form-select border border-dark' name="type" value={Student.type} onChange={(e) => {SetStudent({
@@ -181,13 +169,10 @@ function ModificarUsuario() {
           <Modal.Body>{errorMessage}</Modal.Body>
           <Modal.Footer>
             <button class='btn btn-lg ' style={{background:'black', color:'white'}} onClick={() => {
-              if(isValid.length === 0){
-                if(!confirmation){
-                    navigate("/")
-                }
-                else{
-                    SetOpen(false)
-                }
+              SetOpen(false)
+              setError('')
+              if(confirmation !== null && !confirmation.error){
+                location.reload()
               }
             }}>Cerrar</button>
           </Modal.Footer>
@@ -200,4 +185,4 @@ function ModificarUsuario() {
     
 }
 
-export default ModificarUsuario
+export default ModificarContraseña

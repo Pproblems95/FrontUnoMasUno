@@ -22,6 +22,7 @@ import RegistroGasto from './RegistroGasto.jsx'
 import HistorialGastos from './HistorialGastos.jsx'
 import DetallesGasto from './DetallesGasto.jsx'
 import Cortes from './Cortes.jsx'
+import ModificarContraseña from './ModificarContraseña.jsx'
 import { StrictMode } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import RegistroAlumno from './RegistroAlumno.jsx'
@@ -123,6 +124,10 @@ const router = createBrowserRouter([
   {
     path:'/menu/Administrar/Cortes',
     element: <Cortes/>
+  },
+  {
+    path:'/menu/Administrar/EliminarUsuario/:IdAlumno/ModificarContraseña',
+    element: <ModificarContraseña/>
   }
   
 ]);

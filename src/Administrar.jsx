@@ -63,7 +63,7 @@ function Administrar() {
           onClick={() => navigate('/menu/Pagos/GenerarPago')}
         >
           <TbReportMoney className="rounded-circle" style={{ height: '10vh', width: '10vh', background: 'white', color:'black' }} />
-          <p className="h5 text-white mt-3">Cortes y pagos</p>
+          <p className="h5 text-white mt-3">Generar pago</p>
         </button>
       </div>
       <div className="col-12 col-md-6 col-lg-4 p-2">

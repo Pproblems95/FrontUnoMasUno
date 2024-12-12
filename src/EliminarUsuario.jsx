@@ -37,13 +37,45 @@ function Item(props){
 
 
 function EliminarUsuario() {
+    const url = import.meta.env.VITE_URL
+
     const [data, SetData] = useState(null)
     const [numberOfPages, SetNumber] = useState(0)
     const [usersList, SetUsersList] = useState([])
     const [isPressed, SetPressed] = useState(0)
     const [users, SetUsers] = useState(null)
     const [loading, SetLoading] = useState(false)
-    const url = import.meta.env.VITE_URL
+    const [limit, SetLimit] = useState(0)
+    const [UppperLimit, SetUpper] = useState(0)
+    const [show, SetShow] = useState({
+        beginning: false,
+        ending: false
+    })
+    
+    useEffect(() => {
+        if(numberOfPages <=  5){
+            SetShow({beginning:false, ending:false})
+            SetUpper(5)
+        }
+        else if(isPressed <= 5){
+            SetShow({beginning:false, ending:true})
+            SetUpper(10)
+            SetLimit(0)
+            return
+        }
+        else if(isPressed >= 5 && numberOfPages - isPressed >= 5){
+            SetShow({beginning:true, ending:true})
+            SetUpper(isPressed + 5)
+            SetLimit(isPressed - 5)
+            return
+        }
+        else if (isPressed + 5 > numberOfPages){
+            SetShow({beginning:true, ending:false})
+            SetUpper(numberOfPages)
+            SetLimit(numberOfPages-10)
+        }
+        
+    },[isPressed, numberOfPages])
 
     useEffect(() => {
         fetch(url+'auth/check', {
@@ -96,7 +128,7 @@ function EliminarUsuario() {
        <main  class='d-flex flex-column'>
             <div class='d-flex flex-row container-fluid justify-content-between ' style={{background:'#55d0b6'}}>
                 <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
-                    navigate('../menu')
+                    navigate('../menu/Administrar')
                 }} />
                 <p class='h3 align-self-center ' >Lista de maestros</p>
                 <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
@@ -108,24 +140,60 @@ function EliminarUsuario() {
             {usersList.map((data) => <Item key={data.id} type={data.type} name={data.patLastName + ' ' + data.matLastName + ' ' + data.name} id={data.id}> </Item>)}
             </ul>
             </div>
-            <div class= 'd-flex align-self-center' style={{}}>
-                    {/* Falta agregar la manera de hacerlo que solo se vean 10 botones a la vez */}
-                    {Array.from({length:numberOfPages}, (_,index) => (
-                        
-                        <button key={index} class='flex-fill btn m-3 '  style={{backgroundColor: isPressed === index ? '#55d0b6' : 'black' ,color:'white' }} onClick={() => {
-                           if (isPressed != index) {
-                            SetPressed(index)
-                           fetch(url+'users/all/'+(isPressed+1), {
-                            method:'GET',
-                            credentials:'include',
-                          })  
-                          .then((res) => {return res.json()})
-                          .then((res) => {SetUsers(res)}) 
-                           }
-                            
-                        }}>{index+1}</button>
-                    ))}
-                 </div>
+            <div className="d-flex flex-wrap justify-content-center overflow-auto">
+                    {show.beginning ? (<button onClick={() => {
+                        SetPressed(0)
+                        fetch(url + "users/all/1"  , {
+                            method: "GET",
+                            credentials: "include",
+                        })
+                            .then((res) => res.json())
+                            .then((res) => {
+                                SetUsers(res);
+                            });
+                    }} className="btn btn-dark m-2" style={{background:'black', color:'white'}}>Ir al inicio</button>)
+                    : (<></>)}
+    {Array.from({ length: numberOfPages }, (_, index) => index + 1)
+        .slice(limit, UppperLimit)
+        .map((page) => (
+            <button
+                key={page}
+                className="btn btn-dark m-2"
+                style={{
+                    backgroundColor: isPressed + 1 === page ? "#55d0b6" : "black",
+                    color: "white",
+                }}
+                onClick={() => {
+                    if (isPressed + 1 !== page) {
+                        SetPressed(page - 1);
+                        fetch(url + "users/all/" + page, {
+                            method: "GET",
+                            credentials: "include",
+                        })
+                            .then((res) => res.json())
+                            .then((res) => {
+                                SetUsers(res);
+                            });
+                    }
+                }}
+            >
+                {page}
+            </button>
+        ))}
+        {show.ending ? (<button onClick={() => {
+            SetPressed(numberOfPages-1)
+            fetch(url + "users/all/" + numberOfPages, {
+                method: "GET",
+                credentials: "include",
+            })
+                .then((res) => res.json())
+                .then((res) => {
+                    SetUsers(res);
+                });
+
+        }} className="btn btn-dark m-2" style={{background:'black', color:'white'}}>Ir al final</button>)
+                    : (<></>)}
+</div>
        </main>
     )
 }
