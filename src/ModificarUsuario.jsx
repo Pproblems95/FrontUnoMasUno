@@ -99,15 +99,26 @@ function ModificarUsuario() {
                      <form style={{}} class='align-items-center d-flex flex-column' action={'${url}students'} method="POST" onSubmit={(e) => {
                         
                         e.preventDefault();
+
+                        if(Student.commission < 0 || Student.commission > 99.99){
+                            setError('La comisión no puede ser menor que 0 ó mayor que 99.99')
+                            return
+                        }
                         
                         isValid = Object.entries(Student).filter(([key, value]) => {
-                            if (typeof value === 'number') {
-                                return false;
+                           
+                            switch (key) {
+                                case 'commission':
+                                    return false
+                                case 'name':
+                                case 'patLastName':
+                                case 'matLastName':
+                                    return value.length <3 || value.length > 30
+                            
+                                default:
+                                    return value.length < 3 || value.length > 20;
                             }
-                            if (key === 'commission'){
-                                return false
-                            }
-                            return value.length < 3 || value.length > 20;
+                            
                         });
                        
                         if(isValid.length > 0){
@@ -137,7 +148,8 @@ function ModificarUsuario() {
 
                      }}>
                      <div class='m-4 '>
-                         <p class='h5'>Nombre</p>
+                         <p class='h5 text-center'>Nombre</p>
+                         <p class='text-center'>{Student.name.length+'/30'}</p>
                          <input className="inputs" required type="text" name="name" id="name" value={Student.name} onChange={(e) => {SetStudent({
                             ...Student,
                             name: e.target.value
@@ -145,6 +157,7 @@ function ModificarUsuario() {
                      </div>
                      <div class='m-4 '>
                          <p class='h5 text-center'>Apellido paterno</p>
+                         <p class='text-center'>{Student.patLastName.length+'/30'}</p>
                          <input className="inputs" required type="text" name='patLastName' value={Student.patLastName} onChange={(e) => {SetStudent({
                             ...Student,
                             patLastName: e.target.value
@@ -152,6 +165,7 @@ function ModificarUsuario() {
                      </div>
                      <div class='m-4 '>
                          <p class='h5 text-center'>Apellido materno</p>
+                         <p class='text-center'>{Student.matLastName.length+'/30'}</p>
                          <input className="inputs" required type="text" name='matLastName' value={Student.matLastName} onChange={(e) => {SetStudent({
                             ...Student,
                             matLastName: e.target.value
@@ -159,6 +173,7 @@ function ModificarUsuario() {
                      </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Teléfono</p>
+                        <p class='text-center'>{Student.phone.length+'/15'}</p>
                         <input className="inputs" type='tel' required name='phone' value={Student.phone} onChange={(e) => { SetStudent({...Student, phone: e.target.value}) }} />
                     </div>
                     {/* <div className='m-4 align-items-center d-flex flex-column'>

@@ -80,17 +80,17 @@ function App() {
             <p class='text-center h1'>¡Bienvenido!</p>
 
           </div>
-          <div class='d-flex justify-content-center flex-column  mx-3'>
+          <div class='d-flex justify-content-center flex-column  mx-3' style={{}}>
             <p class='text-center h3'>Usuario</p>
             <input  style={{background:'white', opacity:'90%'}} class='m-5 rounded' placeholder='Introduce tu usuario' value={currentUser.username} onChange={e => SetUser({
               ...currentUser,
               username: e.target.value
             })}/>
           </div>
-          <div class='d-flex justify-content-between flex-column mx-3 '>
+          <div class='d-flex justify-content-center flex-column mx-3 ' style={{}}>
             <p class='text-center m h3'>Contraseña</p>
-            <div class='d-flex flex-row align-self-center m-5'>
-              <input  style={{background:'white', opacity:'90%', }} id='input' class='rounded mx-2 my-3' type={visible ? 'text' : 'password'} value={currentUser.password} placeholder='Introduce tu contraseña' onChange={e => SetUser({
+            <div class='d-flex flex-row  justify-content-between m-5'>
+              <input  style={{background:'white', opacity:'90%', }} id='input' class='rounded input flex-fill my-2 mx-2' type={visible ? 'text' : 'password'} value={currentUser.password} placeholder='Introduce tu contraseña' onChange={e => SetUser({
               ...currentUser,
               password: e.target.value
             })}/>

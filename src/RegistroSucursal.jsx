@@ -87,11 +87,22 @@ function RegistroSucursal() {
                              if(typeof value === 'number'){
                                  return false
                              }
-                             return value.length < 3 || value.length > 20
+
+                             switch (key) {
+                                case 'name':
+                                    return value.length < 3 || value.length > 40
+                                case 'postalCode':
+                                    return value.length < 3 || value.length > 10
+                                case 'address':
+                                    return value.length < 3 || value.length > 80
+                                default:
+                                    return value.length < 3 || value.length > 20
+                             }
+                             
                          })
      
                          if (isValid.length > 0) {
-                             SetError('Todos los campos deben tener de 3 a 20 caracteres')
+                             SetError('Todos los campos deben tener por lo menos 3 caracteres y no superar su límite indicado.')
                          }
                          else {
                              const formData = new FormData(e.target)
@@ -112,6 +123,7 @@ function RegistroSucursal() {
                      }}>
                       <div className='m-4 align-items-center flex-column d-flex' >
                          <p class='h5'>Nombre de la sucursal</p>
+                         <p class='text-center'>{user.name.length+'/40'}</p>
                          <input className="inputs" required type="text" name="name" id="name" value={user.name} onChange={(e) => {SetStudent({
                             ...user,
                             name: e.target.value
@@ -119,6 +131,7 @@ function RegistroSucursal() {
                      </div>
                      <div className='m-4 align-items-center flex-column d-flex'>
                          <p class='h5 text-center'>País</p>
+                         <p class='text-center'>{user.country.length+'/20'}</p>
                          <input className="inputs" required type="text" name='country' value={user.country} onChange={(e) => {SetStudent({
                             ...user,
                             country: e.target.value
@@ -146,10 +159,12 @@ function RegistroSucursal() {
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Codigo postal</p>
+                        <p class='text-center'>{user.postalCode.length+'/10'}</p>
                         <input className="inputs" type='text' required name='postalCode' value={user.postalCode} onChange={(e) => { SetStudent({...user, postalCode: e.target.value}) }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Dirección</p>
+                        <p class='text-center'>{user.address.length+'/80'}</p>
                         <input className="inputs" type='text' required name='address' value={user.address} onChange={(e) => { SetStudent({...user, address: e.target.value}) }} />
                     </div>
                     <div>

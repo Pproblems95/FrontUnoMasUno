@@ -109,6 +109,7 @@ function RegistroGasto() {
                      }}>
                       <div className='m-4 align-items-center flex-column d-flex' >
                          <p class='h5'>Concepto</p>
+                         <p class='text-center'>{user.concept.length+'/20'}</p>
                          <input className="inputs" required type="text" name="concept" id="name" value={user.concept} onChange={(e) => {SetStudent({
                             ...user,
                             concept: e.target.value
@@ -123,6 +124,7 @@ function RegistroGasto() {
                      </div>
                      <div className='m-4'>
                         <p className='h5 text-center'>Método de pago</p>
+                        <p class='text-center'>{user.method.length+'/20'}</p>
                         <input input className="inputs" required  name="method" value={user.method} onChange={(e) => {SetStudent({...user, method: e.target.value})}}></input>
                     </div>
                    

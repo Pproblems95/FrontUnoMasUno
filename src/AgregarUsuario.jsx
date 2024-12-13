@@ -99,10 +99,20 @@ function AgregarUsuario() {
                          }
      
                          const isValid = Object.entries(user).filter(([key, value]) => {
-                             if(key === 'commission'){
-                                 return false
+                             
+                             switch (key) {
+                                case 'commission':
+                                    return false
+                                case 'name':
+                                case 'patLastName':
+                                case 'matLastName':
+                                    return value.length < 3 || value.length >30
+                                case 'phone': 
+                                    return value.length < 3 || value.length > 15
+                                default:
+                                    return value.length < 3 || value.length > 20
                              }
-                             return value.length < 3 || value.length > 20
+                             
                          })
      
                          if (isValid.length > 0) {
@@ -127,6 +137,7 @@ function AgregarUsuario() {
                      }}>
                      <div className='m-4 align-items-center d-flex flex-column'>
                              <p className='h5'>Nombre de usuario</p>
+                             <p class='text-center'>{user.username.length +'/20'}</p>
                              <input className="inputs" required type="text" name='username' value={user.username} onChange={(e) => {SetUser({
                                  ...user,
                                  username:e.target.value
@@ -145,6 +156,7 @@ function AgregarUsuario() {
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
                              <p className='h5'>Nombre</p>
+                             <p class='text-center'>{user.name.length +'/30'}</p>
                              <input className="inputs" required type="text" name='name' value={user.name} onChange={(e) => {SetUser({
                                  ...user,
                                  name:e.target.value
@@ -152,6 +164,7 @@ function AgregarUsuario() {
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
                              <p className='h5'>Apellido paterno</p>
+                             <p class='text-center'>{user.patLastName.length +'/30'}</p>
                              <input className="inputs" required type="text" name='patLastName' value={user.patLastName} onChange={(e) => {SetUser({
                                  ...user,
                                  patLastName:e.target.value
@@ -159,6 +172,7 @@ function AgregarUsuario() {
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
                              <p className='h5'>Apellido materno</p>
+                             <p class='text-center'>{user.matLastName.length +'/30'}</p>
                              <input className="inputs" required type="text" name='matLastName' value={user.matLastName} onChange={(e) => {SetUser({
                                  ...user,
                                  matLastName:e.target.value
@@ -166,6 +180,7 @@ function AgregarUsuario() {
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
                              <p className='h5'>Teléfono</p>
+                             <p class='text-center'>{user.phone.length +'/15'}</p>
                              <input className="inputs" required type="text" name='phone' value={user.phone} onChange={(e) => {SetUser({
                                  ...user,
                                  phone:e.target.value

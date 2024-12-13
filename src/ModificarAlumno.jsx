@@ -18,7 +18,7 @@ function ModificarAlumno() {
         state: 'Aguascalientes',
         city: 'Aguascalientes',
         postalCode: '',
-        addres: '',
+        address: '',
         emergencyPhone: '',
         visitReason: '',
         prevDiag: '',
@@ -29,7 +29,7 @@ function ModificarAlumno() {
     const [data, SetData] = useState(null)
     const [loading, SetLoading] = useState(true)
     const [isOpen, SetOpen] = useState(false)
-    const [errorMessage, setError] = useState('Alumno registrado correctamente. Presiona para regresar al menú.')
+    const [errorMessage, setError] = useState('')
     const [branches, SetBranches] = useState([])
     const [confirmation, SetConfirmation] = useState(true)
     const [branch, SetBranch] = useState(0)
@@ -142,14 +142,29 @@ function ModificarAlumno() {
                             if(key === 'branchName'){
                                 return false
                             }
+                            switch (key) {
+                                case 'alergies':
+                                case 'visitReason':
+                                case 'comments':
+                                case 'prevDiag':
+                                    return value.length < 3 || value.length > 255;
+                            
+                                case 'momFullName':
+                                case 'dadFullName':
+                                case 'address':
+                                    return value.length < 3 || value.length > 50;
+                            
+                                default:
+                                    return value.length < 3 || value.length > 20;
+                            }
 
-                            return value.length < 3 || value.length > 20;
+                            
                         });
                        
                         if(isValid.length > 0){
                             const invalidFields = isValid.map(([key]) => key).join(', ');
                             SetConfirmation(true)
-                            setError('Todos los campos deben tener de 3 a 20 caracteres. ') //fix sign
+                            setError('Todos los campos deben tener al menos 3 caracteres y no sobrepasar su límite indicado') //fix sign
                             SetOpen(true)
                             return
                         }
@@ -173,14 +188,16 @@ function ModificarAlumno() {
 
                      }}>
                      <div class='m-4 '>
-                         <p class='h5'>Nombre del alumno</p>
+                         <p class='h5'>Nombre del alumno </p>
+                         <p class='text-center'> {Student.name.length +'/20' }</p>
                          <input className="inputs" required type="text" name="name" id="name" value={Student.name} onChange={(e) => {SetStudent({
                             ...Student,
                             name: e.target.value
                          })}}/>
                      </div>
                      <div class='m-4 '>
-                         <p class='h5 text-center'>Apellido paterno</p>
+                         <p class='h5 text-center'>Apellido paterno </p>
+                         <p class='text-center'> {Student.patLastName.length +'/30' }</p>
                          <input className="inputs" required type="text" name='patLastName' value={Student.patLastName} onChange={(e) => {SetStudent({
                             ...Student,
                             patLastName: e.target.value
@@ -188,6 +205,7 @@ function ModificarAlumno() {
                      </div>
                      <div class='m-4 '>
                          <p class='h5 text-center'>Apellido materno</p>
+                         <p class='text-center'> {Student.matLastName.length +'/30' }</p>
                          <input className="inputs" required type="text" name='matLastName' value={Student.matLastName} onChange={(e) => {SetStudent({
                             ...Student,
                             matLastName: e.target.value
@@ -195,10 +213,12 @@ function ModificarAlumno() {
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
                         <p className='h5'>Nombre completo de la mamá</p>
+                        <p class='text-center'> {Student.momFullName.length +'/50' }</p>
                         <input className="inputs" required type="text" name='momFullName' value={Student.momFullName} onChange={(e) => { SetStudent({...Student, momFullName: e.target.value}) }} />
                     </div>
                     <div className='m-4 align-items-center d-flex flex-column'>
                         <p className='h5'>Nombre completo del papá</p>
+                        {Student.dadFullName.length +'/50' }
                         <input className="inputs" required type="text" name='dadFullName' value={Student.dadFullName} onChange={(e) => { SetStudent({...Student, dadFullName: e.target.value}) }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
@@ -227,10 +247,12 @@ function ModificarAlumno() {
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5 text-center'>Código postal</p>
+                        <p class='text-center'> {Student.postalCode.length +'/10' }</p>
                         <input className="inputs" required type="text" name='postalCode' value={Student.postalCode} onChange={(e) => { SetStudent({...Student, postalCode: e.target.value}) }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Direccion</p>
+                        <p class='text-center'> {Student.address.length +'/80' }</p>
                         <input className="inputs" type="text" required name='address' value={Student.address} onChange={(e) => { SetStudent({...Student, address: e.target.value}) }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
@@ -239,18 +261,22 @@ function ModificarAlumno() {
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Razón de la visita</p>
+                        <p class='text-center'> {Student.visitReason.length +'/255' }</p>
                         <input className="inputs" type="text" required name='visitReason' value={Student.visitReason} onChange={(e) => { SetStudent({...Student, visitReason: e.target.value}) }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Diagnóstico previo</p>
+                        <p class='text-center'> {Student.prevDiag.length +'/255' }</p>
                         <input className="inputs" type="text" required name='prevDiag' value={Student.prevDiag} onChange={(e) => { SetStudent({...Student, prevDiag: e.target.value}) }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Alergias</p>
+                        <p class='text-center'> {Student.alergies.length +'/255' }</p>
                         <input className="inputs" type="text" required name='alergies' value={Student.alergies} onChange={(e) => { SetStudent({...Student, alergies: e.target.value}) }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Comentarios</p>
+                        <p class='text-center'> {Student.comments.length +'/255' }</p>
                         <input className="inputs" type='text' required name='comments' value={Student.comments} onChange={(e) => { SetStudent({...Student, comments: e.target.value}) }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>

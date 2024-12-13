@@ -100,16 +100,26 @@ function ModificarSucursal() {
                         e.preventDefault();
                         
                         isValid = Object.entries(Student).filter(([key, value]) => {
-                            if (typeof value === 'number') {
-                                return false;
+                            if(typeof value === 'number'){
+                                return false
                             }
-                            return value.length < 3 || value.length > 20;
+
+                            switch (key) {
+                               case 'name':
+                                   return value.length < 3 || value.length > 40
+                               case 'postalCode':
+                                   return value.length < 3 || value.length > 10
+                               case 'address':
+                                   return value.length < 3 || value.length > 80
+                               default:
+                                   return value.length < 3 || value.length > 20
+                            }
                         });
                        
                         if(isValid.length > 0){
                             const invalidFields = isValid.map(([key]) => key).join(', ');
                             SetConfirmation(true)
-                            setError('Todos los campos deben tener de 3 a 20 caracteres. '+ invalidFields) //fix sign
+                            setError('Todos los campos deben tener por lo menos 3 caracteres y no superar su límite indicado.')
                             SetOpen(true)
                             return
                         }
@@ -134,6 +144,7 @@ function ModificarSucursal() {
                      }}>
                      <div class='m-4 '>
                          <p class='h5'>Nombre de la sucursal</p>
+                         <p class='text-center '>{Student.name.length+'/40'}</p>
                          <input className="inputs" required type="text" name="name" id="name" value={Student.name} onChange={(e) => {SetStudent({
                             ...Student,
                             name: e.target.value
@@ -141,6 +152,7 @@ function ModificarSucursal() {
                      </div>
                      <div class='m-4 '>
                          <p class='h5 text-center'>País</p>
+                         <p class='text-center '>{Student.country.length+'/20'}</p>
                          <input className="inputs" required type="text" name='country' value={Student.country} onChange={(e) => {SetStudent({
                             ...Student,
                             country: e.target.value
@@ -168,10 +180,12 @@ function ModificarSucursal() {
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Codigo postal</p>
+                        <p class='text-center '>{Student.postalCode.length+'/10'}</p>
                         <input className="inputs" type='text' required name='postalCode' value={Student.postalCode} onChange={(e) => { SetStudent({...Student, postalCode: e.target.value}) }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Dirección</p>
+                        <p class='text-center '>{Student.address.length+'/80'}</p>
                         <input className="inputs" type='text' required name='address' value={Student.address} onChange={(e) => { SetStudent({...Student, address: e.target.value}) }} />
                     </div>
                     {/* <div className='m-4 align-items-center d-flex flex-column'>

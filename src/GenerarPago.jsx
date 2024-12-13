@@ -148,6 +148,7 @@ function GenerarPago() {
                 </div>
                 <div class='m-4'>
                     <p class='h5 text-center'>Concepto</p>
+                    <p class='text-center '>{payment.concept.length+'/20'}</p>
                     <input className="inputs" type="text" value={payment.concept} onChange={(e) => {SetPayment({...payment, concept:e.target.value})}}/>
                 </div>
                 <div class='m-4'>
@@ -156,6 +157,7 @@ function GenerarPago() {
                 </div>
                 <div class='m-4 align-items-center flex-column d-flex'>
                     <p class='h5'>Forma de pago</p>
+                    <p class='text-center '>{payment.method.length+'/20'}</p>
                     <input className="inputs" value={payment.method} type="text" onChange={(e) => {SetPayment({...payment, method:e.target.value})}}/>
                 </div>
                 
