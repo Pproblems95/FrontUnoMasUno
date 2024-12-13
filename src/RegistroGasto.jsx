@@ -72,7 +72,7 @@ function RegistroGasto() {
                      <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
                          navigate('../menu/Gastos')
                      }} />
-                     <p class='h3 align-self-center ' >Registro de gasto</p>
+                     <p class='h3 align-self-center text-center' >Registro de gasto</p>
                      <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
                  </div>
                  <div class='d-flex align-self-center ' style={{}}>
@@ -83,7 +83,8 @@ function RegistroGasto() {
                              if(typeof value === 'number'){
                                  return false
                              }
-                             return value.length < 3
+                             if (key === 'amount')
+                             return value.length < 3 || value.length > 20
                          })
      
                          if (isValid.length > 0) {

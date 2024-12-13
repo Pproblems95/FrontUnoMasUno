@@ -143,15 +143,15 @@ function Cortes(){
         <div style={{background:'#ffdcf0', }} class='d-flex flex-grow-1 rounded m-1 flex-column text-wrap'   >
             {response === null || response.error === true ? (<p class='h5 text-center'>Selecciona una fecha para corte.</p>) : (<><div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                 <p class='h6' style={{width:'45vw',}}>Total de pagos: </p>
-                <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{audit.paymentTotal}</p>
+                <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{'$'+audit.paymentTotal}</p>
             </div>  
             <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                 <p class='h6' style={{width:'45vw',}}>Total de gastos: </p>
-                <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{audit.expenditureTotal}</p>
+                <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{'$'+audit.expenditureTotal}</p>
             </div>   
-            <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
+            <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2 border-black border-top'>
                 <p class='h6' style={{width:'45vw',}}>Balance final del mes: </p>
-                <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{audit.balance}</p>
+                <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{'$'+audit.balance}</p>
             </div>   </>)}
             
         </div>
@@ -175,7 +175,7 @@ function Cortes(){
                       </div>
                       <div class="d-flex justify-content-between">
                           <p class="h6">Monto:</p>
-                          <p>{payment.amount}</p>
+                          <p>{'$'+payment.amount}</p>
                       </div>
                       <div class="d-flex justify-content-between">
                           <p class="h6">Comisión:</p>
@@ -228,7 +228,7 @@ function Cortes(){
                       </div>
                       <div class="d-flex justify-content-between">
                           <p class="h6">Monto:</p>
-                          <p>{payment.amount}</p>
+                          <p>{'$'+payment.amount}</p>
                       </div>
                   </div>
               </div>

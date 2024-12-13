@@ -43,7 +43,8 @@ function HistorialPagos() {
     const [usersList, SetUsersList] = useState([])
     const [isPressed, SetPressed] = useState(0)
     const [users, SetUsers] = useState(null)
-    const [loading, SetLoading] = useState(false)
+    const [loading, SetLoading] = useState(true)
+    const [errorScreen, SetErrorScreen] = useState(false)
     const url = import.meta.env.VITE_URL
 
     const [limit, SetLimit] = useState(0)
@@ -111,84 +112,115 @@ function HistorialPagos() {
 
     useEffect(() => {
         if(users !== null){
+            if(users.error){
+                SetErrorScreen(true)
+                SetLoading(false)
+            }
             SetNumber(users.body.numberOfPages)
             SetUsersList(users.body.payments)
+            SetLoading(false)
         }
     }, [users])
     
     const navigate = useNavigate()
-    return(
-       <main  class='d-flex flex-column'>
-            <div class='d-flex flex-row container-fluid justify-content-between ' style={{background:'#55d0b6'}}>
-                <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
-                    navigate('../menu')
-                }} />
-                <p class='h3 align-self-center ' >Lista de pagos</p>
-                <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
-            </div>
-            <div style={{ }} class='d-flex flex-grow-1  m-1 flex-column ' >
-            
-                
-            <ul style={{listStyle:'none', padding:0, margin:0}}>
-            {usersList.map((data) => <Item key={data.id} concept={data.concept} date={data.date} id={data.id}> </Item>)}
-            </ul>
-            </div>
-            <div className="d-flex flex-wrap justify-content-center overflow-auto">
-                    {show.beginning ? (<button onClick={() => {
-                        SetPressed(0)
-                        fetch(url + "payments/all/1"  , {
-                            method: "GET",
-                            credentials: "include",
-                        })
-                            .then((res) => res.json())
-                            .then((res) => {
-                                SetUsers(res);
-                            });
-                    }} className="btn btn-dark m-2" style={{background:'black', color:'white'}}>Ir al inicio</button>)
-                    : (<></>)}
-    {Array.from({ length: numberOfPages }, (_, index) => index + 1)
-        .slice(limit, UppperLimit)
-        .map((page) => (
-            <button
-                key={page}
-                className="btn btn-dark m-2"
-                style={{
-                    backgroundColor: isPressed + 1 === page ? "#55d0b6" : "black",
-                    color: "white",
-                }}
-                onClick={() => {
-                    if (isPressed + 1 !== page) {
-                        SetPressed(page - 1);
-                        fetch(url + "payments/all/" + page, {
-                            method: "GET",
-                            credentials: "include",
-                        })
-                            .then((res) => res.json())
-                            .then((res) => {
-                                SetUsers(res);
-                            });
-                    }
-                }}
-            >
-                {page}
-            </button>
-        ))}
-        {show.ending ? (<button onClick={() => {
-            SetPressed(numberOfPages-1)
-            fetch(url + "payments/all/" + numberOfPages, {
-                method: "GET",
-                credentials: "include",
-            })
-                .then((res) => res.json())
-                .then((res) => {
-                    SetUsers(res);
-                });
 
-        }} className="btn btn-dark m-2" style={{background:'black', color:'white'}}>Ir al final</button>)
-                    : (<></>)}
-</div>
-       </main>
-    )
+    if(loading){
+        return(<p>Cargando pagos...</p>)
+    }
+    else if(!loading){
+        if(errorScreen){
+            return (<main>
+                <div class='d-flex flex-row container-fluid justify-content-between ' style={{background:'#55d0b6'}}>
+                     <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
+                         navigate('../menu/Administrar')
+                     }} />
+                     <p class='h3 align-self-center ' >Lista de pagos</p>
+                     <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
+                 </div>
+                 <div style={{ }} class='d-flex flex-grow-1  m-1 flex-column ' >
+                    <p class=' h-3 text-center'> Ocurrió un error, por favor inténtalo de nuevo más tarde. </p>
+                    <button class='align-self-center btn ' onClick={() => {
+                        navigate('../menu')
+                    }} style={{background:'black', color:'white'}}>Regresar</button>
+                 </div>
+            </main>)
+        }
+        return(
+            <main  class='d-flex flex-column'>
+                 <div class='d-flex flex-row container-fluid justify-content-between ' style={{background:'#55d0b6'}}>
+                     <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
+                         navigate('../menu')
+                     }} />
+                     <p class='h3 align-self-center ' >Lista de pagos</p>
+                     <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
+                 </div>
+                 <div style={{ }} class='d-flex flex-grow-1  m-1 flex-column ' >
+                 
+                     
+                 <ul style={{listStyle:'none', padding:0, margin:0}}>
+                 {usersList.map((data) => <Item key={data.id} concept={data.concept} date={data.date} id={data.id}> </Item>)}
+                 </ul>
+                 </div>
+                 <div className="d-flex flex-wrap justify-content-center overflow-auto">
+                         {show.beginning ? (<button onClick={() => {
+                             SetPressed(0)
+                             fetch(url + "payments/all/1"  , {
+                                 method: "GET",
+                                 credentials: "include",
+                             })
+                                 .then((res) => res.json())
+                                 .then((res) => {
+                                     SetUsers(res);
+                                 });
+                         }} className="btn btn-dark m-2" style={{background:'black', color:'white'}}>Ir al inicio</button>)
+                         : (<></>)}
+         {Array.from({ length: numberOfPages }, (_, index) => index + 1)
+             .slice(limit, UppperLimit)
+             .map((page) => (
+                 <button
+                     key={page}
+                     className="btn btn-dark m-2"
+                     style={{
+                         backgroundColor: isPressed + 1 === page ? "#55d0b6" : "black",
+                         color: "white",
+                     }}
+                     onClick={() => {
+                         if (isPressed + 1 !== page) {
+                             SetPressed(page - 1);
+                             fetch(url + "payments/all/" + page, {
+                                 method: "GET",
+                                 credentials: "include",
+                             })
+                                 .then((res) => res.json())
+                                 .then((res) => {
+                                     SetUsers(res);
+                                 });
+                         }
+                     }}
+                 >
+                     {page}
+                 </button>
+             ))}
+             {show.ending ? (<button onClick={() => {
+                 SetPressed(numberOfPages-1)
+                 fetch(url + "payments/all/" + numberOfPages, {
+                     method: "GET",
+                     credentials: "include",
+                 })
+                     .then((res) => res.json())
+                     .then((res) => {
+                         SetUsers(res);
+                     });
+     
+             }} className="btn btn-dark m-2" style={{background:'black', color:'white'}}>Ir al final</button>)
+                         : (<></>)}
+     </div>
+            </main>
+         )
+
+    }
+
+    
 }
 
 export default HistorialPagos

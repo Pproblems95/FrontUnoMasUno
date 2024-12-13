@@ -14,7 +14,7 @@ function DetallesUsuario() {
     const [loading, SetLoading] = useState(true)
     const [student, SetStudent] = useState(null)
     const [isOpen, SetOpen] = useState(false)
-    const [errorMessage, SetError] = useState("¿Estás seguro de que deseas eliminar a este usuario?\nEste proceso no puede deshacerse.")
+    const [errorMessage, SetError] = useState("")
     const url = import.meta.env.VITE_URL
 
     useEffect(() => {
@@ -57,6 +57,12 @@ function DetallesUsuario() {
             }
         }
     }, [deleted])
+
+    useEffect(() => {
+        if(errorMessage !== ''){
+            SetOpen(true)
+        }
+    }, [errorMessage])
 
     if(!loading){
         return(
@@ -119,7 +125,7 @@ function DetallesUsuario() {
                 
             </div>
             <button class=' btn  d-flex align-self-center justify-content-center align-items-center my-3  m-1' style={{background:'red', color:'white'}} onClick={() => {
-                    SetOpen(true)
+                    SetError('¿Estás seguro de que deseas eliminar a este usuario?\nEste proceso no puede deshacerse.')
                 }}>
                     Eliminar usuario
                 </button>
@@ -132,6 +138,7 @@ function DetallesUsuario() {
             {!confirmation ? (<div class='d-flex flex-row mx-auto' style={{}}>
             <button class='btn btn-lg  mx-2' style={{background:'black', color:'white'}} onClick={() => {
               SetOpen(false)
+              SetError('')
               }
             }>Cancelar</button>
             <button class='btn btn-lg ' style={{background:'red', color:'white'}} onClick={() => {

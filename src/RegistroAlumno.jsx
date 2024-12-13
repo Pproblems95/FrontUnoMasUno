@@ -62,7 +62,7 @@ function RegistroAlumno() {
         matLastName: '',
         momFullName: '',
         dadFullName: '',
-        country: '',
+        country: 'México',
         state: 'Aguascalientes',
         city: 'Aguascalientes',
         postalCode: '',
@@ -86,7 +86,7 @@ function RegistroAlumno() {
                      <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
                          navigate('../menu')
                      }} />
-                     <p class='h3 align-self-center ' >Registrar alumno</p>
+                     <p class='h3 align-self-center text-center' >Registrar alumno</p>
                      <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
                  </div>
                  <div style={{background:'#ffdcf0', }} class='d-flex flex-grow-1 rounded m-4 flex-column align-items-center' >
@@ -98,13 +98,13 @@ function RegistroAlumno() {
                             if (typeof value === 'number') {
                                 return false;
                             }
-                            return value.length < 3;
+                            return value.length < 3 || value.length > 20;
                         });
                        
                         if(isValid.length > 0){
                             const invalidFields = isValid.map(([key]) => key).join(', ');
                             SetConfirmation(true)
-                            setError('Todos los campos deben tener de 3 a 20 caracteres. '+ invalidFields) //fix sign
+                            setError('Todos los campos deben tener de 3 a 20 caracteres. ') //fix sign
                             SetOpen(true)
                             return
                         }
@@ -226,7 +226,7 @@ function RegistroAlumno() {
           </Modal.Header>
           <Modal.Body>{errorMessage}</Modal.Body>
           <Modal.Footer>
-            <button class='btn btn-lg ' onClick={() => {
+            <button class='btn btn-lg ' style={{background:'black', color:'white'}} onClick={() => {
               if(isValid.length === 0){
                 if(!confirmation){
                     location.reload()

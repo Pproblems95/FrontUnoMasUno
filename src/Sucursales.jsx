@@ -45,6 +45,7 @@ function Sucursales() {
     const [loading, SetLoading] = useState(true)
     const [limit, SetLimit] = useState(0)
     const [UppperLimit, SetUpper] = useState(0)
+    const [errorScreen, SetErrorScreen] = useState(false)
     const [show, SetShow] = useState({
         beginning: false,
         ending: false
@@ -109,6 +110,11 @@ function Sucursales() {
 
     useEffect(() => {
         if(users !== null){
+                if(users.error){
+                    SetErrorScreen(true)
+                    SetLoading(false)
+                    return
+                }
             SetNumber(users.body.numberOfPages)
             const sortedUsers = users.body.branches.sort((a,b) => {const compared = a.name.localeCompare(b.name) 
                 return compared
@@ -148,6 +154,23 @@ function Sucursales() {
         (<p class='h1'>Cargando sucursales... </p>)
     }
     else if (!loading){
+        if(errorScreen){
+            return (<main>
+                <div class='d-flex flex-row container-fluid justify-content-between ' style={{background:'#55d0b6'}}>
+                     <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
+                         navigate('../menu/Administrar')
+                     }} />
+                     <p class='h3 align-self-center text-center ' >Sucursales</p>
+                     <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
+                 </div>
+                 <div style={{ }} class='d-flex flex-grow-1  m-1 flex-column ' >
+                    <p class=' h-3 text-center'> Ocurrió un error, por favor inténtalo de nuevo más tarde. </p>
+                    <button class='align-self-center btn ' onClick={() => {
+                        navigate('/menu/Administrar')
+                    }} style={{background:'black', color:'white'}}>Regresar</button>
+                 </div>
+            </main>)
+        }
         return(
             <main  class='d-flex flex-column'>
                  <div class='d-flex flex-row container-fluid justify-content-between ' style={{background:'#55d0b6'}}>

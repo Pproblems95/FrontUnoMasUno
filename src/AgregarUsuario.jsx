@@ -102,11 +102,11 @@ function AgregarUsuario() {
                              if(key === 'commission'){
                                  return false
                              }
-                             return value.length < 3
+                             return value.length < 3 || value.length > 20
                          })
      
                          if (isValid.length > 0) {
-                             SetError('Todos los campos deben tener por lo menos 3 carácteres')
+                             SetError('Todos los campos deben tener de 3 a 20 caracteres.')
                          }
                          else {
                              const formData = new FormData(e.target)

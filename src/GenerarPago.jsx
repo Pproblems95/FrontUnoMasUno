@@ -169,11 +169,11 @@ function GenerarPago() {
                         if (key === "amount" || key === "idStudent") {
                             return false; 
                         }
-                        return value.length < 3;
+                        return value.length < 3 || value.length > 20;
                     })
 
                     if (isValid.length > 0){
-                        console.log('alerta de caracteres menor que 3 aqui')
+                        SetError('Todos los campos deben tener de 3 a 20 caracteres.')
                         return
                     }
                     const paymentData = { ...payment };
@@ -203,6 +203,7 @@ function GenerarPago() {
                 <button class='btn btn-lg mx-1' style={{background:'black', color:'white'}} onClick={() => {
                     if(confirmation === null){
                         SetOpen(false)
+                        SetError('')
                         return
                     }
                     location.reload()

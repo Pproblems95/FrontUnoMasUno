@@ -17,7 +17,6 @@ function ModificarSucursal() {
         address: ""
     })
     const [data, SetData] = useState(null)
-    const types = ['admin', 'general', 'independiente']
     const [loading, SetLoading] = useState(true)
     const [isOpen, SetOpen] = useState(false)
     const [errorMessage, setError] = useState('Usuario registrado correctamente. Presiona para regresar al menú.')
@@ -89,9 +88,9 @@ function ModificarSucursal() {
             <main  class='d-flex flex-column'>
                  <div class='d-flex flex-row container-fluid justify-content-between ' style={{background:'#55d0b6'}}>
                      <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
-                         navigate('/menu/Administrar/EliminarUsuario')
+                         navigate('/menu/Administrar/Sucursales')
                      }} />
-                     <p class='h3 align-self-center ' onClick={() => {
+                     <p class='h3 align-self-center text-center ' onClick={() => {
                      }} >Modificar usuario</p>
                      <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
                  </div>
@@ -104,7 +103,7 @@ function ModificarSucursal() {
                             if (typeof value === 'number') {
                                 return false;
                             }
-                            return value.length < 3;
+                            return value.length < 3 || value.length > 20;
                         });
                        
                         if(isValid.length > 0){
@@ -204,6 +203,7 @@ function ModificarSucursal() {
                 }
                 else{
                     SetOpen(false)
+                    setError('')
                 }
               }
             }}>Cerrar</button>

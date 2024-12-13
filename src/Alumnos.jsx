@@ -52,6 +52,7 @@ function Alumnos(){
     const [suggestions, SetSuggestions] = useState({ error: false, status: null, body: [] });
     const [suggestionsRes, SetSuggestionsRes] = useState({ error: false, status: null, body: [] });
     const [limit, SetLimit] = useState(0)
+    const [errorScreen, SetErrorScreen] = useState(false)
     const [UppperLimit, SetUpper] = useState(0)
     const [show, SetShow] = useState({
         beginning: false,
@@ -64,7 +65,7 @@ function Alumnos(){
         })
         .then((res) => {return res.json()})
         .then((res) => {SetData(res)})
-        .finally(() => {SetLoading(false)})
+        .catch((e) => alert(e))
     }, [])
 
     useEffect(() => {
@@ -87,6 +88,11 @@ function Alumnos(){
     }, [data])
     useEffect(() => {
         if(students !== null){
+            if(students.error){
+                SetErrorScreen(true)
+                SetLoading(false)
+
+            }
             
             SetNumber(students.body.numberOfPages)
             const sortedStudents = students.body.students.sort((a,b) => { const comparedStudents = a.branchName.localeCompare(b.branchName)
@@ -98,9 +104,7 @@ function Alumnos(){
                 }
             })
             SetStudentsList(sortedStudents)
-
-            
-
+            SetLoading(false)
         }}, [students])
     
         useEffect(() => {
@@ -149,19 +153,35 @@ function Alumnos(){
     const url = import.meta.env.VITE_URL
     const navigate = useNavigate()
     if(!loading){
+        if(errorScreen){
+            return (<main>
+                            <div class='d-flex flex-row container-fluid justify-content-between ' style={{background:'#55d0b6'}}>
+                                 <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
+                                     navigate('../menu')
+                                 }} />
+                                 <p class='h3 align-self-center ' >Lista de alumnos</p>
+                                 <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
+                             </div>
+                             <div style={{ }} class='d-flex flex-grow-1  m-1 flex-column ' >
+                                <p class=' h-3 text-center'> Ocurrió un error, por favor inténtalo de nuevo más tarde. </p>
+                                <button class='align-self-center btn ' style={{background:'black', color:'white'}}>Regresar</button>
+                             </div>
+                        </main>)
+        }
         return(
             <main  class='d-flex flex-column'>
                  <div class='d-flex flex-row container-fluid justify-content-between ' style={{background:'#55d0b6'}}>
                      <FaArrowAltCircleLeft class='align-self-center' id='regresar'style={{height:60, width:70, margin:10}} onClick={() => {
                          navigate('../menu')
                      }} />
-                     <p class='h3 align-self-center ' >Lista de alumnos</p>
+                     <p class='h3 align-self-center text-center' >Lista de alumnos</p>
                      <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
                  </div>
 
                  <div class='d-flex flex-column justify-content-center my-2'>
                     <p class='h4 text-center'>Búsqueda por nombre</p>
-                    <input class='input align-self-center' value={search} onChange={(e) => {
+                    <div class='d-flex flex-row align-self-center'>
+                    <input class='input mx-1'  value={search} onChange={(e) => {
                         SetSearch(e.target.value)
                         if(search.length < 3){
                             return
@@ -174,6 +194,11 @@ function Alumnos(){
                         .then((res) => {SetSuggestionsRes(res)})
                         .catch((e) => {console.log(e)})
                     }}/>
+                    <button class='btn mx-1 ' style={{background:'black', color:'white'}} onClick={() => {
+                        SetSearch('')
+                    }}>Limpiar</button>
+                    </div>
+                   
                     {suggestions && suggestions.body && suggestions.body.length > 0 && search.length >= 3 && (
     <ul
         className="list-group position-absolute w-100 mt-5 align-self-center "
@@ -286,7 +311,7 @@ function Alumnos(){
     }
     else if (loading){
         return(
-            <p>Loading...</p>
+            <p>Cargando lista de alumnos</p>
         )
     }
     

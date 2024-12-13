@@ -16,7 +16,7 @@ function RegistroSucursal() {
     const [confirmation, SetConfirmation] = useState(null)
     const [user, SetStudent] = useState({
         name: "",
-        country: "",
+        country: "Mexico",
         state: "Aguascalientes",
         city: "Aguascalientes",
         postalCode: "",
@@ -76,7 +76,7 @@ function RegistroSucursal() {
                      <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
                          navigate('../menu/Administrar')
                      }} />
-                     <p class='h3 align-self-center ' >Nueva sucursal</p>
+                     <p class='h3 align-self-center text-center ' >Nueva sucursal</p>
                      <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
                  </div>
                  <div class='d-flex align-self-center ' style={{}}>
@@ -87,11 +87,11 @@ function RegistroSucursal() {
                              if(typeof value === 'number'){
                                  return false
                              }
-                             return value.length < 3
+                             return value.length < 3 || value.length > 20
                          })
      
                          if (isValid.length > 0) {
-                             SetError('Todos los campos deben tener por lo menos 3 carácteres')
+                             SetError('Todos los campos deben tener de 3 a 20 caracteres')
                          }
                          else {
                              const formData = new FormData(e.target)

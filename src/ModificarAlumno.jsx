@@ -95,6 +95,9 @@ function ModificarAlumno() {
                     SetBranch(0); // O cualquier valor predeterminado
                 }
             }
+            if(Student.error ){
+                setError(Student.body)
+            }
             
             SetLoading(false)
         }
@@ -122,7 +125,7 @@ function ModificarAlumno() {
                      <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
                          navigate('../menu/Alumnos/'+params.IdAlumno)
                      }} />
-                     <p class='h3 align-self-center ' onClick={() => {
+                     <p class='h3 align-self-center text-center ' onClick={() => {
                         console.log(branches)
                      }} >Modificar alumno</p>
                      <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
@@ -136,13 +139,17 @@ function ModificarAlumno() {
                             if (typeof value === 'number') {
                                 return false;
                             }
-                            return value.length < 3;
+                            if(key === 'branchName'){
+                                return false
+                            }
+
+                            return value.length < 3 || value.length > 20;
                         });
                        
                         if(isValid.length > 0){
                             const invalidFields = isValid.map(([key]) => key).join(', ');
                             SetConfirmation(true)
-                            setError('Todos los campos deben tener de 3 a 20 caracteres. '+ invalidFields) //fix sign
+                            setError('Todos los campos deben tener de 3 a 20 caracteres. ') //fix sign
                             SetOpen(true)
                             return
                         }
@@ -266,12 +273,16 @@ function ModificarAlumno() {
           <Modal.Body>{errorMessage}</Modal.Body>
           <Modal.Footer>
             <button class='btn btn-lg ' onClick={() => {
+                if(Student.error){
+                    navigate('/menu')
+                }
               if(isValid.length === 0){
                 if(!confirmation){
                     navigate("/")
                 }
                 else{
                     SetOpen(false)
+                    setError('')
                 }
               }
             }}>Cerrar</button>

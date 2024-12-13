@@ -43,9 +43,10 @@ function HistorialGastos() {
     const [usersList, SetUsersList] = useState([])
     const [isPressed, SetPressed] = useState(0)
     const [users, SetUsers] = useState(null)
-    const [loading, SetLoading] = useState(false)
+    const [loading, SetLoading] = useState(true)
     const [limit, SetLimit] = useState(0)
     const [UppperLimit, SetUpper] = useState(0)
+    const [errorScreen, SetErrorScreen] = useState(false)
     const [show, SetShow] = useState({
         beginning: false,
         ending: false
@@ -85,7 +86,6 @@ function HistorialGastos() {
         })
         .then((res) => {return res.json()})
         .then((res) => {SetData(res)})
-        .finally(() => {SetLoading(false)})
         .catch((e) => {console.log(e)})
     }, [])
 
@@ -111,84 +111,115 @@ function HistorialGastos() {
 
     useEffect(() => {
         if(users !== null){
+            if(users.error){
+                SetErrorScreen(true)
+                SetLoading(false)
+            }
             SetNumber(users.body.numberOfPages)
             SetUsersList(users.body.expenditures)
+            SetLoading(false)
         }
     }, [users])
     
     const navigate = useNavigate()
-    return(
-       <main  class='d-flex flex-column'>
-            <div class='d-flex flex-row container-fluid justify-content-between ' style={{background:'#55d0b6'}}>
-                <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
-                    navigate('/menu/Gastos')
-                }} />
-                <p class='h3 align-self-center ' >Lista de gastos</p>
-                <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
-            </div>
-            <div style={{ }} class='d-flex flex-grow-1  m-1 flex-column ' >
-            
-                
-            <ul style={{listStyle:'none', padding:0, margin:0}}>
-            {usersList.map((data) => <Item key={data.id} concept={data.concept} date={data.date} id={data.id}> </Item>)}
-            </ul>
-            </div>
-            <div className="d-flex flex-wrap justify-content-center overflow-auto">
-                    {show.beginning ? (<button onClick={() => {
-                        SetPressed(0)
-                        fetch(url + "expenditures/all/1"  , {
-                            method: "GET",
-                            credentials: "include",
-                        })
-                            .then((res) => res.json())
-                            .then((res) => {
-                                SetUsers(res);
-                            });
-                    }} className="btn btn-dark m-2" style={{background:'black', color:'white'}}>Ir al inicio</button>)
-                    : (<></>)}
-    {Array.from({ length: numberOfPages }, (_, index) => index + 1)
-        .slice(limit, UppperLimit)
-        .map((page) => (
-            <button
-                key={page}
-                className="btn btn-dark m-2"
-                style={{
-                    backgroundColor: isPressed + 1 === page ? "#55d0b6" : "black",
-                    color: "white",
-                }}
-                onClick={() => {
-                    if (isPressed + 1 !== page) {
-                        SetPressed(page - 1);
-                        fetch(url + "expenditures/all/" + page, {
-                            method: "GET",
-                            credentials: "include",
-                        })
-                            .then((res) => res.json())
-                            .then((res) => {
-                                SetUsers(res);
-                            });
-                    }
-                }}
-            >
-                {page}
-            </button>
-        ))}
-        {show.ending ? (<button onClick={() => {
-            SetPressed(numberOfPages-1)
-            fetch(url + "expenditures/all/" + numberOfPages, {
-                method: "GET",
-                credentials: "include",
-            })
-                .then((res) => res.json())
-                .then((res) => {
-                    SetUsers(res);
-                });
 
-        }} className="btn btn-dark m-2" style={{background:'black', color:'white'}}>Ir al final</button>)
-                    : (<></>)}
-</div>
-       </main>
-    )
+    if(loading){
+        return (<p>Cargando gastos...</p>)
+    }
+    else if(!loading){
+        if(errorScreen){
+            return (<main>
+                <div class='d-flex flex-row container-fluid justify-content-between ' style={{background:'#55d0b6'}}>
+                     <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
+                         navigate('../menu/Gastos')
+                     }} />
+                     <p class='h3 align-self-center ' >Lista de gastos</p>
+                     <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
+                 </div>
+                 <div style={{ }} class='d-flex flex-grow-1  m-1 flex-column ' >
+                    <p class=' h-3 text-center'> Ocurrió un error, por favor inténtalo de nuevo más tarde. </p>
+                    <button class='align-self-center btn ' onClick={() => {
+                        navigate('/menu/Gastos')
+                    }} style={{background:'black', color:'white'}}>Regresar</button>
+                 </div>
+            </main>)
+        } 
+
+        return(
+            <main  class='d-flex flex-column'>
+                 <div class='d-flex flex-row container-fluid justify-content-between ' style={{background:'#55d0b6'}}>
+                     <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
+                         navigate('/menu/Gastos')
+                     }} />
+                     <p class='h3 align-self-center ' >Lista de gastos</p>
+                     <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
+                 </div>
+                 <div style={{ }} class='d-flex flex-grow-1  m-1 flex-column ' >
+                 
+                     
+                 <ul style={{listStyle:'none', padding:0, margin:0}}>
+                 {usersList.map((data) => <Item key={data.id} concept={data.concept} date={data.date} id={data.id}> </Item>)}
+                 </ul>
+                 </div>
+                 <div className="d-flex flex-wrap justify-content-center overflow-auto">
+                         {show.beginning ? (<button onClick={() => {
+                             SetPressed(0)
+                             fetch(url + "expenditures/all/1"  , {
+                                 method: "GET",
+                                 credentials: "include",
+                             })
+                                 .then((res) => res.json())
+                                 .then((res) => {
+                                     SetUsers(res);
+                                 });
+                         }} className="btn btn-dark m-2" style={{background:'black', color:'white'}}>Ir al inicio</button>)
+                         : (<></>)}
+         {Array.from({ length: numberOfPages }, (_, index) => index + 1)
+             .slice(limit, UppperLimit)
+             .map((page) => (
+                 <button
+                     key={page}
+                     className="btn btn-dark m-2"
+                     style={{
+                         backgroundColor: isPressed + 1 === page ? "#55d0b6" : "black",
+                         color: "white",
+                     }}
+                     onClick={() => {
+                         if (isPressed + 1 !== page) {
+                             SetPressed(page - 1);
+                             fetch(url + "expenditures/all/" + page, {
+                                 method: "GET",
+                                 credentials: "include",
+                             })
+                                 .then((res) => res.json())
+                                 .then((res) => {
+                                     SetUsers(res);
+                                 });
+                         }
+                     }}
+                 >
+                     {page}
+                 </button>
+             ))}
+             {show.ending ? (<button onClick={() => {
+                 SetPressed(numberOfPages-1)
+                 fetch(url + "expenditures/all/" + numberOfPages, {
+                     method: "GET",
+                     credentials: "include",
+                 })
+                     .then((res) => res.json())
+                     .then((res) => {
+                         SetUsers(res);
+                     });
+     
+             }} className="btn btn-dark m-2" style={{background:'black', color:'white'}}>Ir al final</button>)
+                         : (<></>)}
+     </div>
+            </main>
+         )
+    }
+
+    
 }
 
 export default HistorialGastos

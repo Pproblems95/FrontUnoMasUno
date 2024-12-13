@@ -89,7 +89,7 @@ function ModificarContraseña() {
                      <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
                          navigate('/menu/Administrar/EliminarUsuario/'+params.IdAlumno)
                      }} />
-                     <p class='h3 align-self-center ' onClick={() => {
+                     <p class='h3 align-self-center text-center' onClick={() => {
                      }} >Modificar usuario</p>
                      <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
                  </div>

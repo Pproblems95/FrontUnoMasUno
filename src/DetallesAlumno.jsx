@@ -42,6 +42,10 @@ function DetallesAlumno() {
 
     useEffect(() => {
         if(student != null){
+            if(student.error){
+                SetLoading(false)
+                SetError('Ocurrió un error cargando al estudiante, por favor inténtalo más tarde.')
+            }
             SetLoading(false)
         }
     }, [student])
@@ -162,7 +166,7 @@ function DetallesAlumno() {
     }
 
     else if(loading){
-        (<text>Loading...</text>)
+        return (<p>Cargando estudiante...</p>)
     }
 
     

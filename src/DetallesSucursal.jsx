@@ -14,7 +14,7 @@ function DetallesSucursal() {
     const [loading, SetLoading] = useState(true)
     const [student, SetStudent] = useState(null)
     const [isOpen, SetOpen] = useState(false)
-    const [errorMessage, SetError] = useState("¿Estás seguro de que deseas eliminar esta sucursal?\nEste proceso no puede deshacerse.")
+    const [errorMessage, SetError] = useState('')
     const url = import.meta.env.VITE_URL
 
     useEffect(() => {
@@ -45,6 +45,10 @@ function DetallesSucursal() {
 
     useEffect(() => {
         if(student != null){
+            if(student.error){
+                SetError('Ocurrió un error. Por favor inténtalo más tarde')
+                SetLoading(false)
+            }
             SetLoading(false)
         }
     }, [student])
@@ -60,6 +64,13 @@ function DetallesSucursal() {
             }
         }
     }, [deleted])
+
+    useEffect(() => {
+        if(errorMessage !== ''){
+            SetOpen(true)
+        }
+        
+    }, [errorMessage])
 
     if(!loading){
         return(
@@ -105,7 +116,7 @@ function DetallesSucursal() {
                     Modificar sucursal
                 </button>
                 <button class=' btn  d-flex   m-1' style={{background:'red', color:'white'}} onClick={() => {
-                    SetOpen(true)
+                    SetError("¿Estás seguro de que deseas eliminar esta sucursal?\nEste proceso no puede deshacerse.")
                 }}>
                     Eliminar sucursal
                 </button>
@@ -120,6 +131,7 @@ function DetallesSucursal() {
             {!confirmation ? (<div class='d-flex flex-row mx-auto' style={{}}>
             <button class='btn btn-lg  mx-2' style={{background:'black', color:'white'}} onClick={() => {
               SetOpen(false)
+              SetError('')
               }
             }>Cancelar</button>
             <button class='btn btn-lg ' style={{background:'red', color:'white'}} onClick={() => {
@@ -145,7 +157,7 @@ function DetallesSucursal() {
     }
 
     else if(loading){
-        (<p class='h1'>Cargando sucursal...</p>)
+        (<p >Cargando sucursal...</p>)
     }
 
     

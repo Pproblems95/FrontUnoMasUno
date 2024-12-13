@@ -14,6 +14,7 @@ function App() {
   const [loginError, SetLoError] = useState(null)
   const navigate = useNavigate()
   const [isOpen, SetOpen] = useState(false)
+  const [visible, SetVisible] = useState(false)
   const [errorMessage, setError] = useState('Ambos campos deben ser llenados con por lo menos 3 caracteres. Los usuarios no deben ser mayores a 20 caracteres.')
   
   useEffect(() => {
@@ -67,19 +68,14 @@ function App() {
    
     return(
       <>
-    <main style={{height:'100vh'}} class='d-flex flex-row'>
-        <div style={{background:'white', width:'30vw'}} class='d-flex justify-content-between flex-column'>
-          <div class='justify-content-center d-flex' style={{}}>
-          <img src={logo} class='img-fluid ' alt='logo centro educativo'style={{height:'25vh', width:'20vw',  }}/>
-          </div>
-          <div>
-            <p class='text-center'>Trabajando por ser el futuro <br/> y la mejora del ser.</p>
-          </div>
-          <div class='d-flex justify-content-center'>
-          <p/>
-          </div>
-        </div>
-        <div style={{background:'#55d0b6', width:'70vw'}} class='d-flex  justify-content-between  flex-column '>
+    <main style={{background:'black', height:'100vh'}} class='d-flex flex-column '>
+        <div class='d-flex flex-row container-fluid justify-content-between ' style={{background:'white'}}>
+        <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
+                             
+                             <p class=' align-self-center ' >Por el desarrollo <br></br>íntegro del ser</p>
+                             
+                         </div>
+        <div style={{background:'#55d0b6'}} class='d-flex  justify-content-between  flex-column flex-fill'>
           <div style={{}} class='d-flex justify-content-center'>
             <p class='text-center h1'>¡Bienvenido!</p>
 
@@ -93,14 +89,24 @@ function App() {
           </div>
           <div class='d-flex justify-content-between flex-column mx-3 '>
             <p class='text-center m h3'>Contraseña</p>
-            <input  style={{background:'white', marginRight:'10vw', opacity:'90%', }} class='rounded m-5' type='password' value={currentUser.password} placeholder='Introduce tu contraseña' onChange={e => SetUser({
+            <div class='d-flex flex-row align-self-center m-5'>
+              <input  style={{background:'white', opacity:'90%', }} id='input' class='rounded mx-2 my-3' type={visible ? 'text' : 'password'} value={currentUser.password} placeholder='Introduce tu contraseña' onChange={e => SetUser({
               ...currentUser,
               password: e.target.value
             })}/>
+              <button class='btn btn-sm  align-self-center ' style={{color:'white', background:'black'}} onClick={()=> {
+                if(visible){
+                  SetVisible(false)
+                  return
+                }
+                SetVisible(true)
+              }}>{visible ? 'Ocultar contraseña' : 'Ver contraseña'}</button>
+            </div>
+            
           </div>
           <button id="button"  class='align-self-center m-4 btn-lg btn btn-block' onClick={() => {
             if((currentUser.username.length < 3 || currentUser.username.length > 20)  || currentUser.password.length < 3){
-              setError('Ambos campos deben ser llenados con por lo menos 3 caracteres. Los usuarios no deben ser mayores a 20 caracteres.')
+              setError('Todos los campos debene tener de 3 a 20 caracteres.')
               SetOpen(true)
             }
             else{

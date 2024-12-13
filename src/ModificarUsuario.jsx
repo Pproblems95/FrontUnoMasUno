@@ -91,7 +91,7 @@ function ModificarUsuario() {
                      <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
                          navigate('/menu/Administrar/EliminarUsuario')
                      }} />
-                     <p class='h3 align-self-center ' onClick={() => {
+                     <p class='h3 align-self-center text-center ' onClick={() => {
                      }} >Modificar usuario</p>
                      <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
                  </div>
@@ -104,13 +104,16 @@ function ModificarUsuario() {
                             if (typeof value === 'number') {
                                 return false;
                             }
-                            return value.length < 3;
+                            if (key === 'commission'){
+                                return false
+                            }
+                            return value.length < 3 || value.length > 20;
                         });
                        
                         if(isValid.length > 0){
                             const invalidFields = isValid.map(([key]) => key).join(', ');
                             SetConfirmation(true)
-                            setError('Todos los campos deben tener de 3 a 20 caracteres. '+ invalidFields) //fix sign
+                            setError('Todos los campos deben tener de 3 a 20 caracteres. ') //fix sign
                             SetOpen(true)
                             return
                         }
@@ -187,6 +190,7 @@ function ModificarUsuario() {
                 }
                 else{
                     SetOpen(false)
+                    setError('')
                 }
               }
             }}>Cerrar</button>
