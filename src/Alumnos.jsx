@@ -42,6 +42,7 @@ function Item(props){
 }
 
 function Alumnos(){
+    let test = ''
     const [isPressed, SetPressed] = useState(0)
     const [numberOfPages, SetNumber] = useState(0)
     const [loading, SetLoading] = useState(true)
@@ -117,7 +118,12 @@ function Alumnos(){
                 return
             }
             SetSuggestions(suggestionsRes)
+            
         }, [suggestionsRes]);
+
+        useEffect(() => {
+            console.log(suggestions)
+        }, [suggestions])
 
         useEffect(() => {
             if(numberOfPages <=  5){
@@ -144,9 +150,24 @@ function Alumnos(){
             
         },[isPressed, numberOfPages])
 
+
+
         useEffect(() => {console.log('Final: '+ UppperLimit) 
             console.log('numberofPagoes ' + numberOfPages)}, [UppperLimit])
         useEffect(() => {console.log('inicio: ' + limit)}, [limit])
+
+        useEffect(() => {
+            if(search.length < 3){
+                return
+            }
+            fetch(url+'students/searchName/'+search.replace(/ /g, '-'), {
+                method:'GET',
+                credentials:'include'
+            })
+            .then((res) => { return res.json()})
+            .then((res) => {SetSuggestionsRes(res)})
+            .catch((e) => {console.log(e)})
+        }, [search])
 
   
 
@@ -183,16 +204,7 @@ function Alumnos(){
                     <div class='d-flex flex-row align-self-center'>
                     <input class='input mx-1'  value={search} onChange={(e) => {
                         SetSearch(e.target.value)
-                        if(search.length < 3){
-                            return
-                        }
-                        fetch(url+'students/searchName/'+search.replace(/ /g, '-'), {
-                            method:'GET',
-                            credentials:'include'
-                        })
-                        .then((res) => { return res.json()})
-                        .then((res) => {SetSuggestionsRes(res)})
-                        .catch((e) => {console.log(e)})
+                        
                     }}/>
                     <button class='btn mx-1 ' style={{background:'black', color:'white'}} onClick={() => {
                         SetSearch('')

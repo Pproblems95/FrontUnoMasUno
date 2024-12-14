@@ -85,6 +85,10 @@ function DetallesRecibo() {
                      <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{payment.date}</p>
                  </div>  
                  <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
+                     <p class='h6' style={{width:'45vw',}}>Monto: </p>
+                     <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{'$'+payment.amount}</p>
+                 </div>  
+                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                      <p class='h6' style={{width:'45vw',}}>Maestro: </p>
                      <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{payment.teacher}</p>
                  </div>   

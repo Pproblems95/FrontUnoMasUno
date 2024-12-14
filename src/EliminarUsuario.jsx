@@ -17,7 +17,7 @@ function Item(props){
                     </div>
 
                     <div class=' d-flex  text-truncate  ' style={{width:'33vw'}}>
-                    <p class=' align-self-center h6' style={{fontWeight:'bold', marginRight:10, }}>Alumno:</p>
+                    <p class=' align-self-center h6' style={{fontWeight:'bold', marginRight:10, }}>Nombre:</p>
                     <p class='align-self-center' style={{marginTop:'1.4vh'}}>{props.name}</p>
                     </div>
 
@@ -159,7 +159,7 @@ function EliminarUsuario() {
                      <FaArrowAltCircleLeft class='align-self-center' style={{height:60, width:70, margin:10}} onClick={() => {
                          navigate('../menu/Administrar')
                      }} />
-                     <p class='h3 align-self-center ' >Lista de maestros</p>
+                     <p class='h3 align-self-center text-center ' >Lista de usuarios</p>
                      <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
                  </div>
                  <div style={{ }} class='d-flex flex-grow-1  m-1 flex-column ' >

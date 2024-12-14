@@ -17,8 +17,8 @@ function Item(props){
                     </div>
 
                     <div class=' d-flex  text-truncate  ' style={{width:'33vw'}}>
-                    <p class=' align-self-center h6' style={{fontWeight:'bold', marginRight:10, }}>País:</p>
-                    <p class='align-self-center' style={{marginTop:'1.4vh'}}>{props.country}</p>
+                    <p class=' align-self-center h6' style={{fontWeight:'bold', marginRight:10, }}>Ciudad:</p>
+                    <p class='align-self-center' style={{marginTop:'1.4vh'}}>{props.city}</p>
                     </div>
 
                     <div class='align-content-center ' style={{}}> 
@@ -184,7 +184,7 @@ function Sucursales() {
                  
                      
                  <ul style={{listStyle:'none', padding:0, margin:0}}>
-                 {usersList.map((data) => <Item key={data.id}  country={data.country} name={data.name} id={data.id}> </Item>)}
+                 {usersList.map((data) => <Item key={data.id}  country={data.country} city={data.city} name={data.name} id={data.id}> </Item>)}
                  </ul>
                  </div>
                 <div className="d-flex flex-wrap justify-content-center overflow-auto">

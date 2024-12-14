@@ -76,16 +76,16 @@ function DetallesUsuario() {
             </div>
             <div style={{background:'#ffdcf0', }} class='d-flex flex-grow-1 rounded m-1 flex-column text-wrap' >
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
-                    <p class='h6' style={{width:'45vw',}}>Nombre del usuario: </p>
+                    <p class='h6' style={{width:'45vw',}}>Nombre: </p>
                     <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.name}</p>
-                </div>     
-                <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
-                    <p class='h6' style={{width:'45vw',}}>Apellido materno </p>
-                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.matLastName}</p>
-                </div>   
+                </div>    
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Apellido paterno: </p>
                     <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.patLastName}</p>
+                </div>    
+                <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
+                    <p class='h6' style={{width:'45vw',}}>Apellido materno </p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.matLastName || 'No registrado'}</p>
                 </div>   
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Teléfono: </p>
@@ -101,7 +101,7 @@ function DetallesUsuario() {
                 </div>   
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Comisión </p>
-                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.commission !== null ? student.prevDiag : 'No'}</p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.commission !== null ? student.prevDiag : 'No registrada'}</p>
                 </div>   
                 {/* <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Cuál: </p>

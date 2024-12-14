@@ -105,10 +105,13 @@ function AgregarUsuario() {
                                     return false
                                 case 'name':
                                 case 'patLastName':
-                                case 'matLastName':
                                     return value.length < 3 || value.length >30
+                                case 'matLastName': 
+                                    return value.length > 30
                                 case 'phone': 
                                     return value.length < 3 || value.length > 15
+                                case 'password':
+                                    return value.length < 3
                                 default:
                                     return value.length < 3 || value.length > 20
                              }
@@ -116,11 +119,16 @@ function AgregarUsuario() {
                          })
      
                          if (isValid.length > 0) {
-                             SetError('Todos los campos deben tener de 3 a 20 caracteres.')
+                             SetError('Todos los campos obligatorios deben tener al menos 3 caracteres y no pasar su límite.')
                          }
                          else {
-                             const formData = new FormData(e.target)
-                             const payLoad = JSON.stringify(Object.fromEntries(formData))
+                            const formData = new FormData(e.target);
+                            let dataObject = Object.fromEntries(formData);
+                            dataObject = Object.fromEntries(
+                            Object.entries(dataObject).filter(([_, value]) => value.trim() !== '')
+                            );
+
+                            const payload = JSON.stringify(dataObject);
      
                              fetch(url+'auth/signup/', {
                                  method:'POST',
@@ -128,15 +136,18 @@ function AgregarUsuario() {
                                  headers: {
                                      'content-type': 'application/json'
                                    },
-                                 body: payLoad
+                                 body: payload
                              }).then((res) => {return res.json()})
                              .then((res) => {SetConfirmation(res)})
                              .catch((e) => console.log(e))
      
                          }
                      }}>
+                        <div class='align-self-start justify-content-end '>
+                        <p class='text-end'> * = campo obligatorio</p>
+                        </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
-                             <p className='h5'>Nombre de usuario</p>
+                             <p className='h5'>Nombre de usuario*</p>
                              <p class='text-center'>{user.username.length +'/20'}</p>
                              <input className="inputs" required type="text" name='username' value={user.username} onChange={(e) => {SetUser({
                                  ...user,
@@ -144,18 +155,18 @@ function AgregarUsuario() {
                              })}}/>
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
-                             <p className='h5'>Contraseña</p>
+                             <p className='h5'>Contraseña*</p>
                              <input className="inputs" required type="password" name='password' value={user.password} onChange={(e) => {SetUser({
                                  ...user,
                                  password:e.target.value
                              })}}/>
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
-                             <p className='h5'>Confirmar contraseña</p>
+                             <p className='h5'>Confirmar contraseña*</p>
                              <input className="inputs" required type="password"  value={pass} onChange={(e) => {SetPass(e.target.value)}}/>
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
-                             <p className='h5'>Nombre</p>
+                             <p className='h5'>Nombre*</p>
                              <p class='text-center'>{user.name.length +'/30'}</p>
                              <input className="inputs" required type="text" name='name' value={user.name} onChange={(e) => {SetUser({
                                  ...user,
@@ -163,7 +174,7 @@ function AgregarUsuario() {
                              })}}/>
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
-                             <p className='h5'>Apellido paterno</p>
+                             <p className='h5'>Apellido paterno*</p>
                              <p class='text-center'>{user.patLastName.length +'/30'}</p>
                              <input className="inputs" required type="text" name='patLastName' value={user.patLastName} onChange={(e) => {SetUser({
                                  ...user,
@@ -173,13 +184,13 @@ function AgregarUsuario() {
                      <div className='m-4 align-items-center d-flex flex-column'>
                              <p className='h5'>Apellido materno</p>
                              <p class='text-center'>{user.matLastName.length +'/30'}</p>
-                             <input className="inputs" required type="text" name='matLastName' value={user.matLastName} onChange={(e) => {SetUser({
+                             <input className="inputs"  type="text" name='matLastName' value={user.matLastName} onChange={(e) => {SetUser({
                                  ...user,
                                  matLastName:e.target.value
                              })}}/>
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
-                             <p className='h5'>Teléfono</p>
+                             <p className='h5'>Teléfono*</p>
                              <p class='text-center'>{user.phone.length +'/15'}</p>
                              <input className="inputs" required type="text" name='phone' value={user.phone} onChange={(e) => {SetUser({
                                  ...user,
@@ -187,7 +198,7 @@ function AgregarUsuario() {
                              })}}/>
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
-                             <p className='h5'>Tipo de usuario</p>
+                             <p className='h5'>Tipo de usuario*</p>
                              <select class='form-select border border-dark' name="type" value={user.type} onChange={(e) => {SetUser({
                                  ...user,
                                  type:e.target.value
@@ -201,7 +212,7 @@ function AgregarUsuario() {
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
                              <p className='h5'>Comisión</p>
-                             <input className="inputs" required type="number" name='commission' value={user.commission} onChange={(e) => {SetUser({
+                             <input className="inputs"  type="number" name='commission' value={user.commission} onChange={(e) => {SetUser({
                                  ...user,
                                  commission:e.target.value
                              })}}/>

@@ -94,10 +94,10 @@ function HistorialGastos() {
             if(data.error){
                 navigate("/")
             }
-            else if(!data.body.type === "admin"){
+            else if(data.body.type === "independiente"){
                 navigate('../menu')
             }
-            else if(data.body.type === "admin"){
+            else if(data.body.type === "admin" || data.body.type === "general"){
                 fetch(url+'expenditures/all/'+(isPressed+1), {
                     method:'GET',
                     credentials:'include'

@@ -14,6 +14,7 @@ function DetallesAlumno() {
     const [loading, SetLoading] = useState(true)
     const [student, SetStudent] = useState(null)
     const [isOpen, SetOpen] = useState(false)
+    const [isGeneral, SetGeneral] = useState(false)
     const [errorMessage, SetError] = useState("¿Estás seguro de que deseas eliminar a este alumno?\nEste proceso no puede deshacerse.")
     const url = import.meta.env.VITE_URL
 
@@ -36,6 +37,9 @@ function DetallesAlumno() {
                 .then((res) => {return res.json()})
                 .then((res) => {SetStudent(res.body)})
                 .catch((e) => console.log(e))
+            }
+            if(data.body.type === 'general'){
+                SetGeneral(true)
             }
         }
     }, [data])
@@ -78,12 +82,20 @@ function DetallesAlumno() {
                     <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.name}</p>
                 </div>     
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
-                    <p class='h6' style={{width:'45vw',}}>Nombre de la mamá: </p>
-                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.matLastName}</p>
+                    <p class='h6' style={{width:'45vw',}}>Apellido paterno </p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.patLastName}</p>
                 </div>   
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
-                    <p class='h6' style={{width:'45vw',}}>Nombre del papá: </p>
-                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.patLastName}</p>
+                    <p class='h6' style={{width:'45vw',}}>Apellido materno </p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.matLastName || 'No registrado'}</p>
+                </div>   
+                <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
+                    <p class='h6' style={{width:'45vw',}}>Nombre del papá </p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.patLastName || 'No registrado'}</p>
+                </div>   
+                <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
+                    <p class='h6' style={{width:'45vw',}}>Nombre de la mamá </p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.patLastName || 'No registrado'}</p>
                 </div>   
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Dirección: </p>
@@ -95,15 +107,15 @@ function DetallesAlumno() {
                 </div>   
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Motivo inicial de la visita: </p>
-                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.visitReason}</p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.visitReason || 'No registrado'}</p>
                 </div>   
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Alergias o padecimientos del menor: </p>
-                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.alergies}</p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.alergies || 'No registrado'}</p>
                 </div>   
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Cuenta con diagnóstico previo? </p>
-                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.prevDiag !== null ? student.prevDiag : 'No'}</p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.prevDiag !== null ? student.prevDiag : 'No registrado'}</p>
                 </div>   
                 {/* <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Cuál: </p>
@@ -119,7 +131,9 @@ function DetallesAlumno() {
                 </div>      
                 
             </div>
-            <div class='d-flex flex-row align-self-center'>
+            {isGeneral ? (<button class='btn align-self-end' style={{background:'black', color:'white'}} onClick={() => {
+                navigate('/menu/Alumnos/')
+            }}> Regresar</button>) : (<div class='d-flex flex-row align-self-center'>
             <button class=' btn  d-flex  m-1' style={{background:'black', color:'white'}} onClick={() => {
                     navigate('/menu/Alumnos/'+params.IdAlumno+'/Modificar')
                 }}>
@@ -131,7 +145,8 @@ function DetallesAlumno() {
                     Eliminar estudiante
                 </button>
                 
-            </div>
+            </div>)}
+            
             <Modal show={isOpen} >
           <Modal.Header >
             <Modal.Title> Advertencia </Modal.Title>

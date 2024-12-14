@@ -13,109 +13,116 @@ import { useEffect, useState } from "react";
 
 
 function Administrar() {
-    const url = import.meta.env.VITE_URL
-    const navigate = useNavigate()
-    const [data, SetData] = useState(null)
+  const url = import.meta.env.VITE_URL;
+  const navigate = useNavigate();
+  const [data, SetData] = useState(null);
 
-    useEffect(() => {
-        fetch(url+'auth/check', {
-            method: 'GET',
-            credentials: 'include',
-        })
-        .then((res) => {return res.json()})
-        .then((res) => {SetData(res)})
-    }, [])
+  useEffect(() => {
+      fetch(url + 'auth/check', {
+          method: 'GET',
+          credentials: 'include',
+      })
+      .then((res) => res.json())
+      .then((res) => SetData(res));
+  }, []);
 
-    useEffect(() => {
-        if(data != null){
-            if(data.error){
-                navigate("/")
-            }
-            else if(!data.body.type === "admin"){
-                navigate('../menu')
-            }
-            else if(data.body.type === "admin"){
-                console.log('funciona')
-            }
-        }
-    }, [data])
-    return(
-       <main style={{ height: '100vh', width: '100vw' }} className="d-flex flex-column">
-  <div className="d-flex flex-row container-fluid justify-content-between" style={{ background: '#55d0b6' }}>
-    <FaArrowAltCircleLeft
-      className="align-self-center"
-      style={{ height: 60, width: 70, margin: 10 }}
-      onClick={() => navigate('../menu')}
-    />
-    <p className="h3 align-self-center">Administrar</p>
-    <img
-      src={logo}
-      className="img-fluid align-self-center"
-      alt="logo centro educativo"
-      style={{ height: 100, width: 90 }}
-    />
-  </div>
-  <div className="d-flex flex-grow-1 m-1 flex-column">
-    <div className="row flex-fill m-0">
-      <div className="col-12 col-md-6 col-lg-4 p-2">
-        <button
-          className="btn btn-dark w-100 h-100 d-flex flex-column align-items-center justify-content-center"
-          onClick={() => navigate('/menu/Pagos/GenerarPago')}
-        >
-          <TbReportMoney className="rounded-circle" style={{ height: '10vh', width: '10vh', background: 'white', color:'black' }} />
-          <p className="h5 text-white mt-3">Generar pago</p>
-        </button>
-      </div>
-      <div className="col-12 col-md-6 col-lg-4 p-2">
-        <button
-          className="btn btn-dark w-100 h-100 d-flex flex-column align-items-center justify-content-center"
-          onClick={() => navigate('/menu/Administrar/AgregarUsuario')}
-        >
-          <FaUserCircle className="rounded-circle" style={{ height: '10vh', width: '10vh', background: 'white', color:'black' }} />
-          <p className="h5 text-white mt-3">Registrar usuario</p>
-        </button>
-      </div>
-      <div className="col-12 col-md-6 col-lg-4 p-2">
-        <button
-          className="btn btn-dark w-100 h-100 d-flex flex-column align-items-center justify-content-center"
-          onClick={() => navigate('/menu/Administrar/EliminarUsuario')}
-        >
-          <FaUserAltSlash className="rounded-circle" style={{ height: '10vh', width: '10vh', background: 'white', color:'black' }} />
-          <p className="h5 text-white mt-3">Ver usuarios</p>
-        </button>
-      </div>
-      <div className="col-12 col-md-6 col-lg-4 p-2">
-        <button
-          className="btn btn-dark w-100 h-100 d-flex flex-column align-items-center justify-content-center"
-          onClick={() => navigate('/menu/Administrar/Sucursales')}
-        >
-          <PiBuildingOffice className="rounded-circle" style={{ height: '10vh', width: '10vh', background: 'white', color:'black' }} />
-          <p className="h5 text-white mt-3">Ver sucursales</p>
-        </button>
-      </div>
-      <div className="col-12 col-md-6 col-lg-4 p-2">
-        <button
-          className="btn btn-dark w-100 h-100 d-flex flex-column align-items-center justify-content-center"
-          onClick={() => navigate('/menu/Administrar/RegistroSucursal')}
-        >
-          <FaPlus className="rounded-circle" style={{ height: '10vh', width: '10vh', background: 'white', color:'black' }} />
-          <p className="h5 text-white mt-3">Registrar sucursal</p>
-        </button>
-      </div>
-      <div className="col-12 col-md-6 col-lg-4 p-2">
-        <button
-          className="btn btn-dark w-100 h-100 d-flex flex-column align-items-center justify-content-center"
-          onClick={() => navigate('/menu/Administrar/Cortes')}
-        >
-          <MdOutlineAttachMoney className="rounded-circle" style={{ height: '10vh', width: '10vh', background: 'white', color:'black' }} />
-          <p className="h5 text-white mt-3">Cortes</p>
-        </button>
-      </div>
-    </div>
-  </div>
-</main>
+  useEffect(() => {
+      if (data != null) {
+          if (data.error) {
+              navigate("/");
+          } else if (!data.body.type === "admin") {
+              navigate('../menu');
+          } else if (data.body.type === "admin") {
+              console.log('funciona');
+          }
+      }
+  }, [data]);
 
-  )
+  return (
+      <main style={{ height: '100vh', width: '100vw' }} className="d-flex flex-column">
+          <div className="d-flex flex-row container-fluid justify-content-between" style={{ background: '#55d0b6' }}>
+              <FaArrowAltCircleLeft
+                  className="align-self-center"
+                  style={{ height: 60, width: 70, margin: 10 }}
+                  onClick={() => navigate('../menu')}
+              />
+              <p className="h3 align-self-center">Administrar</p>
+              <img
+                  src={logo}
+                  className="img-fluid align-self-center"
+                  alt="logo centro educativo"
+                  style={{ height: 100, width: 90 }}
+              />
+          </div>
+          <div className="d-flex flex-grow-1 m-1 flex-column">
+              <div className="row flex-fill m-0">
+                  {/* Módulo Usuarios */}
+                  <div className="col-12 mb-3" style={{ border: '2px solid black', borderRadius: '5px', padding: '10px' }}>
+                      <p className="h4 text-center">Módulo Usuarios</p>
+                      <div className="row justify-content-center" style={{}}>
+                          <div className="col-12 col-md-6 col-lg-4 p-2 align-self-center" style={{}} >
+                              <button
+                                  className="btn btn-dark w-100 h-100 d-flex flex-column  align-items-center justify-content-center"
+                                  onClick={() => navigate('/menu/Administrar/AgregarUsuario')}
+                              >
+                                  <FaUserCircle className="rounded-circle" style={{ height: '10vh', width: '10vh', background: 'white', color: 'black' }} />
+                                  <p className="h5 text-white mt-3">Registrar usuario</p>
+                              </button>
+                          </div>
+                          <div className="col-12 col-md-6 col-lg-4 p-2">
+                              <button
+                                  className="btn btn-dark w-100 h-100 d-flex flex-column align-items-center justify-content-center"
+                                  onClick={() => navigate('/menu/Administrar/EliminarUsuario')}
+                              >
+                                  <FaUserAltSlash className="rounded-circle" style={{ height: '10vh', width: '10vh', background: 'white', color: 'black' }} />
+                                  <p className="h5 text-white mt-3">Ver usuarios</p>
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+
+                  {/* Módulo Sucursales */}
+                  <div className="col-12 mb-3" style={{ border: '2px solid black', borderRadius: '5px', padding: '10px' }}>
+                      <p className="h4 text-center">Módulo Sucursales</p>
+                      <div className="row justify-content-center ">
+                          <div className="col-12 col-md-6 col-lg-4 p-2">
+                              <button
+                                  className="btn btn-dark w-100 h-100 d-flex flex-column align-items-center justify-content-center"
+                                  onClick={() => navigate('/menu/Administrar/Sucursales')}
+                              >
+                                  <PiBuildingOffice className="rounded-circle" style={{ height: '10vh', width: '10vh', background: 'white', color: 'black' }} />
+                                  <p className="h5 text-white mt-3">Ver sucursales</p>
+                              </button>
+                          </div>
+                          <div className="col-12 col-md-6 col-lg-4 p-2">
+                              <button
+                                  className="btn btn-dark w-100 h-100 d-flex flex-column align-items-center justify-content-center"
+                                  onClick={() => navigate('/menu/Administrar/RegistroSucursal')}
+                              >
+                                  <FaPlus className="rounded-circle" style={{ height: '10vh', width: '10vh', background: 'white', color: 'black' }} />
+                                  <p className="h5 text-white mt-3">Registrar sucursal</p>
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+
+                  {/* Otros botones */}
+                <div class='d-flex flex-column'>
+                <div className="col-12 col-md-6 col-lg-4 p-2 align-self-center" >
+                      <button
+                          className="btn btn-dark w-100 h-100 d-flex flex-column align-items-center justify-content-center"
+                          onClick={() => navigate('/menu/Administrar/Cortes')}
+                      >
+                          <MdOutlineAttachMoney className="rounded-circle" style={{ height: '10vh', width: '10vh', background: 'white', color: 'black' }} />
+                          <p className="h5 text-white mt-3">Cortes</p>
+                      </button>
+                  </div>
+                </div>
+                  
+              </div>
+          </div>
+      </main>
+  );
 }
 
-export default Administrar
+export default Administrar;

@@ -12,6 +12,8 @@ function Menu() {
     const [data, SetData] = useState(null)
     const [loading, SetLoading] = useState(true)
     const [isAdmin, SetAdmin] = useState(false)
+    const [isIndie, SetIndie] = useState(false)
+    const [isGeneral, SetGeneral] = useState(false)
     useEffect(() => {
         SetLoading(true)
         fetch(url+'users/current', {
@@ -40,6 +42,15 @@ function Menu() {
     useEffect(() => {
         if(data != null && data.body.type === 'admin'){
             SetAdmin(true)
+            return
+        }
+        if(data != null && data.body.type === 'independiente'){
+            SetIndie(true)
+            return
+        }
+        if(data != null && data.body.type === 'general'){
+            SetGeneral(true)
+            return
         }
     }, [data])
 
@@ -73,18 +84,19 @@ function Menu() {
                         <img src={logo} class='img-fluid' alt='logo de centro educativo' />   
                     </div>
                     <div style={{margin:'2%'}} class='d-flex  flex-column justify-content-center flex-grow-1 '  >
-                        <Button class=' btn' style={{background:'black', marginTop:'10%'}} type='button' onClick={() => {
+                        {isGeneral ? (<></>) : (<Button class=' btn' style={{background:'black', marginTop:'10%'}} type='button' onClick={() => {
                             navigate('/menu/RegistroAlumno')
-                        }} >Registrar alumno</Button>
+                        }} >Registrar alumno</Button>)}
                         <Button class=' btn' style={{background:'black', marginTop:'10%'}} type='button' onClick={() => {
                             navigate('/menu/Alumnos')
                         }}>Ver alumnos</Button>
                         <Button class=' btn' style={{background:'black', marginTop:'10%'}} type='button' onClick={() => {
                             navigate('/menu/Pagos')
                         }} >Pagos</Button>
-                         <Button class=' btn' style={{background:'black', marginTop:'10%'}} type='button' onClick={() => {
+                        {isIndie ? (<></>) : (<Button class=' btn' style={{background:'black', marginTop:'10%'}} type='button' onClick={() => {
                             navigate('/menu/Gastos')
-                        }} >Gastos</Button>
+                        }} >Gastos</Button>)}
+                         
                         <Button class=' btn' style={{background:'black', marginTop:'10%'}} type='button' onClick={() => {
                             fetch(url+'auth/logout', {
                                 method: 'DELETE',

@@ -11,9 +11,9 @@ function RegistroAlumno() {
     const [data, SetData] = useState(null)
     const [loading, SetLoading] = useState(true)
     const [isOpen, SetOpen] = useState(false)
-    const [errorMessage, setError] = useState('Alumno registrado correctamente. Presiona para regresar al menú.')
+    const [errorMessage, setError] = useState('')
     const [branches, SetBranches] = useState([])
-    const [confirmation, SetConfirmation] = useState(true)
+    const [confirmation, SetConfirmation] = useState(null)
     const url = import.meta.env.VITE_URL
     useEffect(() => {
         fetch(url+'auth/check', {
@@ -44,11 +44,22 @@ function RegistroAlumno() {
     }, [data])
 
     useEffect(() => {
-        if(!confirmation){
-            setError('Alumno registrado correctamente. Presiona para regresar al menú.')
-            SetOpen(true)
+        if(confirmation !== null){
+            if(!confirmation.error){
+                setError('Alumno registrado correctamente. Presiona para regresar al menú.')
+
+            }
+            else if (confirmation.error){
+                setError('Ocurrió un error, por favor inténtanlo más tarde')
+            }
         }
+        
     },[confirmation])
+
+    useEffect(() => {
+        if(errorMessage !== '')
+            SetOpen(true)
+    }, [errorMessage])
 
 
     
@@ -89,7 +100,7 @@ function RegistroAlumno() {
                      <p class='h3 align-self-center text-center' >Registrar alumno</p>
                      <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
                  </div>
-                 <div style={{background:'#ffdcf0', }} class='d-flex flex-grow-1 rounded m-4 flex-column align-items-center' >
+                 <div style={{background:'#ffdcf0', }} class='d-flex flex-grow-1 rounded m-4 flex-column ' >
                      <form style={{}} class='align-items-center d-flex flex-column' action={'${url}students'} method="POST" onSubmit={(e) => {
                         
                         e.preventDefault();
@@ -106,13 +117,14 @@ function RegistroAlumno() {
                                 case 'visitReason':
                                 case 'comments':
                                 case 'prevDiag':
-                                    return value.length < 3 || value.length > 255;
-                            
+                                    return value.length > 255;
                                 case 'momFullName':
                                 case 'dadFullName':
+                                    return value.length > 50
                                 case 'address':
                                     return value.length < 3 || value.length > 50;
-                            
+                                case 'matLastName':
+                                    return value > 30
                                 default:
                                     return value.length < 3 || value.length > 20;
                             }})
@@ -120,13 +132,17 @@ function RegistroAlumno() {
                         if(isValid.length > 0){
                             const invalidFields = isValid.map(([key]) => key).join(', ');
                             SetConfirmation(true)
-                            setError('Todos los campos deben tener al menos 3 caracteres y no superar su límite especificado. ') //fix sign
-                            SetOpen(true)
+                            setError('Todos los campos obligatorios deben tener al menos 3 caracteres y no superar su límite especificado. ') //fix sign
                             return
                         }
                         else{
-                            const formData = new FormData(e.target)
-                            const payload = JSON.stringify(Object.fromEntries(formData))
+                            const formData = new FormData(e.target);
+                            let dataObject = Object.fromEntries(formData);
+                            dataObject = Object.fromEntries(
+                            Object.entries(dataObject).filter(([_, value]) => value.trim() !== '')
+                            );
+
+                            const payload = JSON.stringify(dataObject);
                             fetch(url+'students', {
                                 method:'POST',
                                 credentials:'include',
@@ -137,13 +153,17 @@ function RegistroAlumno() {
                                 
                             })
                             .then((res) => {return res.json()})
-                            .then((res) => {SetConfirmation(res.error)})
+                            .then((res) => {SetConfirmation(res)})
+                            .catch((e) => alert(e))
                            
                         }
 
                      }}>
+                        <div class='align-self-end'>
+                        <p class=''> * = campo obligatorio</p>
+                        </div>
                      <div class='m-4 '>
-                         <p class='h5'>Nombre del alumno </p>
+                         <p class='h5'>Nombre del alumno* </p>
                          <p class='text-center'> {Student.name.length +'/20' }</p>
                          <input className="inputs" required type="text" name="name" id="name" value={Student.name} onChange={(e) => {SetStudent({
                             ...Student,
@@ -151,9 +171,9 @@ function RegistroAlumno() {
                          })}}/>
                      </div>
                      <div class='m-4 '>
-                         <p class='h5 text-center'>Apellido paterno </p>
-                         <p class='text-center'> {Student.patLastName.length +'/30' }</p>
-                         <input className="inputs" required type="text" name='patLastName' value={Student.patLastName} onChange={(e) => {SetStudent({
+                         <p class='h5 text-center'>Apellido paterno* </p>
+                         <p class='text-center'> {Student.patLastName.length +'/30 ' }</p>
+                         <input className="inputs"  required type="text" name='patLastName' value={Student.patLastName} onChange={(e) => {SetStudent({
                             ...Student,
                             patLastName: e.target.value
                          })}}/>
@@ -161,7 +181,7 @@ function RegistroAlumno() {
                      <div class='m-4 '>
                          <p class='h5 text-center'>Apellido materno</p>
                          <p class='text-center'> {Student.matLastName.length +'/30' }</p>
-                         <input className="inputs" required type="text" name='matLastName' value={Student.matLastName} onChange={(e) => {SetStudent({
+                         <input className="inputs"  type="text" name='matLastName' value={Student.matLastName} onChange={(e) => {SetStudent({
                             ...Student,
                             matLastName: e.target.value
                          })}}/>
@@ -169,19 +189,19 @@ function RegistroAlumno() {
                      <div className='m-4 align-items-center d-flex flex-column'>
                         <p className='h5'>Nombre completo de la mamá</p>
                         <p class='text-center'> {Student.momFullName.length +'/50' }</p>
-                        <input className="inputs" required type="text" name='momFullName' value={Student.momFullName} onChange={(e) => { SetStudent({...Student, momFullName: e.target.value}) }} />
+                        <input className="inputs"  type="text" name='momFullName' value={Student.momFullName} onChange={(e) => { SetStudent({...Student, momFullName: e.target.value}) }} />
                     </div>
                     <div className='m-4 align-items-center d-flex flex-column'>
                         <p className='h5'>Nombre completo del papá</p>
                         {Student.dadFullName.length +'/50' }
-                        <input className="inputs" required type="text" name='dadFullName' value={Student.dadFullName} onChange={(e) => { SetStudent({...Student, dadFullName: e.target.value}) }} />
+                        <input className="inputs" type="text" name='dadFullName' value={Student.dadFullName} onChange={(e) => { SetStudent({...Student, dadFullName: e.target.value}) }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
-                        <p className='h5'>País de origen</p>
+                        <p className='h5'>País de origen*</p>
                         <input className="inputs" required type='text' name='country' value={Student.country} onChange={(e) => { SetStudent({...Student, country: e.target.value}) }} />
                     </div>
                     <div className='m-4'>
-                        <p className='h5 text-center'>Estado</p>
+                        <p className='h5 text-center'>Estado*</p>
                         <select class='form-select border border-dark  '  name="state" value={Student.state} onChange={(e) => {SetStudent({...Student, state: e.target.value})}}>
                          {Object.keys(estados).map((llaves) => (
                             <option  key={llaves} value={llaves} >
@@ -191,7 +211,7 @@ function RegistroAlumno() {
                         </select>
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
-                        <p className='h5 text-center'>Ciudad</p>
+                        <p className='h5 text-center'>Ciudad*</p>
                         <select  class='form-select border border-dark  ' name="city"  value={Student.city} onChange={(e) => { SetStudent({ ...Student, city:e.target.value}) }}>
                         {estados[Student.state].map((ciudad) => (
                             <option class='mw-25' key={ciudad} value={ciudad}>
@@ -201,39 +221,84 @@ function RegistroAlumno() {
                         </select>
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
-                        <p className='h5 text-center'>Código postal</p>
-                        <p class='text-center'> {Student.postalCode.length +'/10' }</p>
+                        <p className='h5 text-center'>Código postal*</p>
+                        <p class='text-center'> {Student.postalCode.length +'/10 ' }</p>
                         <input className="inputs" required type="text" name='postalCode' value={Student.postalCode} onChange={(e) => { SetStudent({...Student, postalCode: e.target.value}) }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
-                        <p className='h5'>Direccion</p>
-                        <p class='text-center'> {Student.address.length +'/80' }</p>
+                        <p className='h5'>Direccion*</p>
+                        <p class='text-center'> {Student.address.length +'/80 ' }</p>
                         <input className="inputs" type="text" required name='address' value={Student.address} onChange={(e) => { SetStudent({...Student, address: e.target.value}) }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
-                        <p className='h5'>Teléfono de emergencia</p>
+                        <p className='h5'>Teléfono de emergencia*</p>
+                        <p class='text-center'> {Student.emergencyPhone.length +'/15 ' }</p>
                         <input className="inputs" type='tel' required name='emergencyPhone' value={Student.emergencyPhone} onChange={(e) => { SetStudent({...Student, emergencyPhone: e.target.value}) }} />
                     </div>
-                    <div className='m-4 align-items-center flex-column d-flex'>
-                        <p className='h5'>Razón de la visita</p>
-                        <p class='text-center'> {Student.visitReason.length +'/255' }</p>
-                        <input className="inputs" type="text" required name='visitReason' value={Student.visitReason} onChange={(e) => { SetStudent({...Student, visitReason: e.target.value}) }} />
-                    </div>
-                    <div className='m-4 align-items-center flex-column d-flex'>
-                        <p className='h5'>Diagnóstico previo</p>
-                        <p class='text-center'> {Student.prevDiag.length +'/255' }</p>
-                        <input className="inputs" type="text" required name='prevDiag' value={Student.prevDiag} onChange={(e) => { SetStudent({...Student, prevDiag: e.target.value}) }} />
-                    </div>
-                    <div className='m-4 align-items-center flex-column d-flex'>
-                        <p className='h5'>Alergias</p>
-                        <p class='text-center'> {Student.alergies.length +'/255' }</p>
-                        <input className="inputs" type="text" required name='alergies' value={Student.alergies} onChange={(e) => { SetStudent({...Student, alergies: e.target.value}) }} />
-                    </div>
-                    <div className='m-4 align-items-center flex-column d-flex'>
-                        <p className='h5'>Comentarios</p>
-                        <p class='text-center'> {Student.comments.length +'/255' }</p>
-                        <input className="inputs" type='text' required name='comments' value={Student.comments} onChange={(e) => { SetStudent({...Student, comments: e.target.value}) }} />
-                    </div>
+                    <div className="m-4 align-items-center flex-column d-flex">
+    <p className="h5">Razón de la visita</p>
+    <p className="text-center">{Student.visitReason.length + "/255"}</p>
+    <textarea
+        className="form-control border border-black"
+        name="visitReason"
+        value={Student.visitReason}
+        onChange={(e) => {
+            SetStudent({ ...Student, visitReason: e.target.value });
+            e.target.style.height = "auto"; // Restablece el tamaño
+            e.target.style.height = `${e.target.scrollHeight}px`; // Ajusta el tamaño al contenido
+        }}
+        rows="1"
+    />
+</div>
+
+<div className="m-4 align-items-center flex-column d-flex">
+    <p className="h5">Diagnóstico previo</p>
+    <p className="text-center">{Student.prevDiag.length + "/255"}</p>
+    <textarea
+        className="form-control border border-black"
+        name="prevDiag"
+        value={Student.prevDiag}
+        onChange={(e) => {
+            SetStudent({ ...Student, prevDiag: e.target.value });
+            e.target.style.height = "auto";
+            e.target.style.height = `${e.target.scrollHeight}px`;
+        }}
+        rows="1"
+    />
+</div>
+
+<div className="m-4 align-items-center flex-column d-flex">
+    <p className="h5">Alergias</p>
+    <p className="text-center">{Student.alergies.length + "/255"}</p>
+    <textarea
+        className="form-control border border-black"
+        name="alergies"
+        value={Student.alergies}
+        onChange={(e) => {
+            SetStudent({ ...Student, alergies: e.target.value });
+            e.target.style.height = "auto";
+            e.target.style.height = `${e.target.scrollHeight}px`;
+        }}
+        rows="1"
+    />
+</div>
+
+<div className="m-4 align-items-center flex-column d-flex">
+    <p className="h5">Comentarios</p>
+    <p className="text-center">{Student.comments.length + "/255"}</p>
+    <textarea
+        className="form-control border border-black"
+        name="comments"
+        value={Student.comments}
+        onChange={(e) => {
+            SetStudent({ ...Student, comments: e.target.value });
+            e.target.style.height = "auto";
+            e.target.style.height = `${e.target.scrollHeight}px`;
+        }}
+        rows="1"
+    />
+</div>
+
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Sucursal</p>
                         <select class='form-select border border-dark' name="idBranch">
@@ -255,9 +320,12 @@ function RegistroAlumno() {
           <Modal.Footer>
             <button class='btn btn-lg ' style={{background:'black', color:'white'}} onClick={() => {
               if(isValid.length === 0){
-                if(!confirmation){
-                    location.reload()
-                }
+                    if (confirmation !== null){
+                        if(!confirmation.error){
+                            location.reload()
+                        }
+                    }
+                
                 else{
                     SetOpen(false)
                 }
