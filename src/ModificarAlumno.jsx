@@ -8,6 +8,7 @@ import  estados from '../resources/estados.json'
 
 function ModificarAlumno() {
     let isValid = []
+    const doubleLetters = ['ñ', 'á', 'Á', 'é', 'É', 'í', 'Í', 'ó', 'Ó', 'ú', 'Ú', 'ü', 'Ü'];
     const [Student, SetStudent] = useState({
         name: '',
         patLastName: '',
@@ -24,8 +25,37 @@ function ModificarAlumno() {
         prevDiag: '',
         alergies: '',
         comments: '',
-        idBranch: 0
+        branchId: 0
     })
+    const [counter, SetCounter] = useState({
+        name: 0,
+        patLastName: 0,
+        matLastName: 0,
+        momFullName: 0,
+        dadFullName: 0,
+        country: 0,
+        postalCode: 0,
+        address: 0,
+        emergencyPhone: 0,
+        visitReason: 0,
+        prevDiag: 0,
+        alergies: 0,
+        comments: 0,
+    })
+    const [sum, SetSum] = useState({
+        name: 0,
+        patLastName: 0,
+        matLastName: 0,
+        momFullName: 0,
+        dadFullName: 0,
+        country: 0,
+        postalCode: 0,
+        address: 0,
+        emergencyPhone: 0,
+        visitReason: 0,
+        prevDiag: 0,
+        alergies: 0,
+        comments: 0,})
     const [StudentRes, SetStudentRes] = useState(null)
     const [data, SetData] = useState(null)
     const [loading, SetLoading] = useState(true)
@@ -33,7 +63,6 @@ function ModificarAlumno() {
     const [errorMessage, setError] = useState('')
     const [branches, SetBranches] = useState([])
     const [confirmation, SetConfirmation] = useState(null)
-    const [branch, SetBranch] = useState(0)
     const params = useParams()
     const url = import.meta.env.VITE_URL
     useEffect(() => {
@@ -78,6 +107,7 @@ function ModificarAlumno() {
 
     useEffect(() => {
         if (StudentRes !== null) {
+            SetLoading(false)
             // Filtrar campos que no son null
             const noNull = Object.entries(StudentRes).filter(([_, value]) => value !== null);
     
@@ -93,12 +123,108 @@ function ModificarAlumno() {
             console.log("Estado actualizado:", Student);
         }
     }, [StudentRes]);
+
+    useEffect(() => {
+        SetSum((prevSum) => ({
+            ...prevSum,
+            name: Student.name.length + counter.name,
+        }));
+    }, [counter.name, Student.name]);
+    
+    useEffect(() => {
+        SetSum((prevSum) => ({
+            ...prevSum,
+            patLastName: Student.patLastName.length + counter.patLastName,
+        }));
+    }, [counter.patLastName, Student.patLastName]);
+    
+    useEffect(() => {
+        SetSum((prevSum) => ({
+            ...prevSum,
+            matLastName: Student.matLastName.length + counter.matLastName,
+        }));
+    }, [counter.matLastName, Student.matLastName]);
+    
+    useEffect(() => {
+        SetSum((prevSum) => ({
+            ...prevSum,
+            momFullName: Student.momFullName.length + counter.momFullName,
+        }));
+    }, [counter.momFullName, Student.momFullName]);
+    
+    useEffect(() => {
+        SetSum((prevSum) => ({
+            ...prevSum,
+            dadFullName: Student.dadFullName.length + counter.dadFullName,
+        }));
+    }, [counter.dadFullName, Student.dadFullName]);
+    
+    useEffect(() => {
+        SetSum((prevSum) => ({
+            ...prevSum,
+            country: Student.country.length + counter.country,
+        }));
+    }, [counter.country, Student.country]);
+    
+    useEffect(() => {
+        SetSum((prevSum) => ({
+            ...prevSum,
+            postalCode: Student.postalCode.length + counter.postalCode,
+        }));
+    }, [counter.postalCode, Student.postalCode]);
+    
+    useEffect(() => {
+        SetSum((prevSum) => ({
+            ...prevSum,
+            address: Student.address.length + counter.address,
+        }));
+    }, [counter.address, Student.address]);
+    
+    useEffect(() => {
+        SetSum((prevSum) => ({
+            ...prevSum,
+            emergencyPhone: Student.emergencyPhone.length + counter.emergencyPhone,
+        }));
+    }, [counter.emergencyPhone, Student.emergencyPhone]);
+    
+    useEffect(() => {
+        SetSum((prevSum) => ({
+            ...prevSum,
+            visitReason: Student.visitReason.length + counter.visitReason,
+        }));
+    }, [counter.visitReason, Student.visitReason]);
+    
+    useEffect(() => {
+        SetSum((prevSum) => ({
+            ...prevSum,
+            prevDiag: Student.prevDiag.length + counter.prevDiag,
+        }));
+    }, [counter.prevDiag, Student.prevDiag]);
+    
+    useEffect(() => {
+        SetSum((prevSum) => ({
+            ...prevSum,
+            alergies: Student.alergies.length + counter.alergies,
+        }));
+    }, [counter.alergies, Student.alergies]);
+    
+    useEffect(() => {
+        SetSum((prevSum) => ({
+            ...prevSum,
+            comments: Student.comments.length + counter.comments,
+        }));
+    }, [counter.comments, Student.comments]);
+
+    useEffect(() => {
+        console.log(sum)
+    }, [sum])
+    
     
 
     useEffect(() => {
         if(confirmation !== null){
             if(!confirmation.error){
-                setError('Alumno registrado correctamente. Presiona para regresar al menú.')
+                setError('Alumno modificado correctamente. Presiona para regresar al menú.')
 
             }
             else if (confirmation.error){
@@ -113,32 +239,35 @@ function ModificarAlumno() {
             SetOpen(true)
     }, [errorMessage])
 
-    useEffect(() => {
-        if(Student !== null){
-            if(Student.idBranch != branch){
-                const branchName = Student.branchName; // Obtener el branchName del response
-                const matchingBranch = branches.find(branch => branch.name === branchName); // Buscar la sucursal correspondiente
-                if (matchingBranch) {
-                    SetBranch(matchingBranch.id);
-                } else {
-                    console.error(`No se encontró ninguna sucursal con el nombre: ${branchName}`);
-                    // Opcionalmente asigna un valor por defecto o maneja el caso de error
-                    SetBranch(0); // O cualquier valor predeterminado
-                }
-            }
+    useEffect(() => {console.log()}, [Student.name])
 
-            if(Student.error ){
-                setError(Student.body)
-            }
-            
-            SetLoading(false)
+    const handleChange = (e, fieldName, maxLength) => {
+        const newValue = e.target.value;
+        const isDeleting = newValue.length < Student[fieldName].length;
+        if (!isDeleting && sum[fieldName] >= maxLength) {
+            return;
         }
-        console.log(Student)
-    }, [Student])
-    useEffect(() => {
-        console.log(branch)
-        SetStudent({...Student, idBranch:branch})
-    }, [branch])
+        else if(isDeleting && sum[fieldName] >= maxLength){
+            const matches = Array.from(e.target.value).filter(char => doubleLetters.includes(char)).length;
+            SetCounter({ ...counter, [fieldName]: matches });
+            SetStudent({
+            ...Student,
+            [fieldName]: e.target.value
+            })
+        }
+        if (sum[fieldName] >= maxLength-1) {
+            const endsWithDoubleLetter = doubleLetters.some(letter => newValue.endsWith(letter));
+            if (endsWithDoubleLetter && !isDeleting) {
+              return;
+            }
+        }
+        if(newValue.length + counter[fieldName] > maxLength){
+            return
+        }
+        const matches = Array.from(e.target.value).filter(char => doubleLetters.includes(char)).length;
+        SetCounter({ ...counter, [fieldName]: matches });
+        SetStudent({ ...Student, [fieldName]: e.target.value})           
+    }
     
     
     const navigate = useNavigate()
@@ -168,34 +297,47 @@ function ModificarAlumno() {
                         e.preventDefault();
                         
                         isValid = Object.entries(Student).filter(([key, value]) => {
-                            if (typeof value === 'number') {
-                                return false;
-                            }
-                            if(key === 'branchName'){
-                                return false
-                            }
                             switch (key) {
-                                case 'alergies':
-                                case 'visitReason':
-                                case 'comments':
-                                case 'prevDiag':
-                                    return value.length > 255;
-                                case 'momFullName':
-                                case 'dadFullName':
-                                    return value.length > 50
-                                case 'address':
-                                    return value.length < 3 || value.length > 50;
+                                case 'name':
+                                    return sum.name < 3 || sum.name > 30;
+                                case 'patLastName': 
+                                    return sum.patLastName < 3 || sum.patLastName > 30;
                                 case 'matLastName':
-                                    return value > 30
+                                    return sum.matLastName < 3 || sum.matLastName > 30;
+                                case 'momFullName':
+                                    return sum.momFullName < 3 || sum.momFullName > 50;
+                                case 'dadFullName':
+                                    return sum.dadFullName < 3 || sum.dadFullName > 50;
+                                case 'country':
+                                    return sum.country < 3 || sum.country > 20;
+                                case 'state':
+                                    return sum.state < 3 || sum.state > 20;
+                                case 'city':
+                                    return sum.city < 3 || sum.city > 20;
+                                case 'postalCode':
+                                    return sum.postalCode < 3 || sum.postalCode > 10;
+                                case 'address':
+                                    return sum.address < 3 || sum.address > 80;
+                                case 'emergencyPhone':
+                                    return sum.emergencyPhone < 3 || sum.emergencyPhone > 15;
+                                case 'visitReason':
+                                    return sum.visitReason > 255;
+                                case 'prevDiag':
+                                    return sum.prevDiag > 255;
+                                case 'alergies':
+                                    return sum.alergies > 255;
+                                case 'comments':
+                                    return sum.comments > 255;
+                                case 'idBranch':
+                                    return false;
                                 default:
-                                    return value.length < 3 || value.length > 20;
-                            }})
+                                    return false;  
+                            }
+                            })
                        
                         if(isValid.length > 0){
                             const invalidFields = isValid.map(([key]) => key).join(', ');
-                            SetConfirmation(true)
                             setError('Todos los campos deben tener al menos 3 caracteres y no sobrepasar su límite indicado') //fix sign
-                            SetOpen(true)
                             return
                         }
                         else{
@@ -206,6 +348,7 @@ function ModificarAlumno() {
                             );
 
                             const payload = JSON.stringify(dataObject);
+                            
                             fetch(url+'students/'+params.IdAlumno, {
                                 method:'PUT',
                                 credentials:'include',
@@ -226,41 +369,44 @@ function ModificarAlumno() {
                         </div>
                      <div class='m-4 '>
                          <p class='h5'>Nombre del alumno* </p>
-                         <p class='text-center'> {Student.name.length +'/20' }</p>
-                         <input className="inputs" required type="text" name="name" id="name" value={Student.name} onChange={(e) => {SetStudent({
-                            ...Student,
-                            name: e.target.value
-                         })}}/>
+                         <p class='text-center'> {(sum.name) +'/20' }</p>
+                         <input className="inputs" required type="text" name="name" id="name" value={Student.name} onChange={(e) => {
+                            handleChange(e, 'name', 20)}}/>
                      </div>
                      <div class='m-4 '>
                          <p class='h5 text-center'>Apellido paterno* </p>
-                         <p class='text-center'> {Student.patLastName.length +'/30 ' }</p>
-                         <input className="inputs"  required type="text" name='patLastName' value={Student.patLastName} onChange={(e) => {SetStudent({
-                            ...Student,
-                            patLastName: e.target.value
-                         })}}/>
+                         <p class='text-center'> {sum.patLastName+'/30 ' }</p>
+                         <input className="inputs"  required type="text" name='patLastName' value={Student.patLastName} onChange={(e) => {
+                            handleChange(e,'patLastName', 30)
+                           }}/>
                      </div>
                      <div class='m-4 '>
                          <p class='h5 text-center'>Apellido materno</p>
-                         <p class='text-center'> {Student.matLastName.length +'/30' }</p>
-                         <input className="inputs"  type="text" name='matLastName' value={Student.matLastName} onChange={(e) => {SetStudent({
-                            ...Student,
-                            matLastName: e.target.value
-                         })}}/>
+                         <p class='text-center'> {sum.matLastName +'/30' }</p>
+                         <input className="inputs"  type="text" name='matLastName' value={Student.matLastName} onChange={(e) => {
+                            handleChange(e, 'matLastName', 30)
+                         }}/>
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
                         <p className='h5'>Nombre completo de la mamá</p>
-                        <p class='text-center'> {Student.momFullName.length +'/50' }</p>
-                        <input className="inputs"  type="text" name='momFullName' value={Student.momFullName} onChange={(e) => { SetStudent({...Student, momFullName: e.target.value}) }} />
+                        <p class='text-center'> {sum.momFullName +'/50' }</p>
+                        <input className="inputs"  type="text" name='momFullName' value={Student.momFullName} onChange={(e) => {
+                            handleChange(e, 'momFullName', 50)
+                         }} />
                     </div>
                     <div className='m-4 align-items-center d-flex flex-column'>
                         <p className='h5'>Nombre completo del papá</p>
                         {Student.dadFullName.length +'/50' }
-                        <input className="inputs" type="text" name='dadFullName' value={Student.dadFullName} onChange={(e) => { SetStudent({...Student, dadFullName: e.target.value}) }} />
+                        <input className="inputs" type="text" name='dadFullName' value={Student.dadFullName} onChange={(e) => { 
+                            handleChange(e, 'dadFullName', 50)
+                         }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>País de origen*</p>
-                        <input className="inputs" required type='text' name='country' value={Student.country} onChange={(e) => { SetStudent({...Student, country: e.target.value}) }} />
+                        <p class='text-center'> {sum.country +'/15' }</p>
+                        <input className="inputs" required type='text' name='country' value={Student.country} onChange={(e) => { 
+                            handleChange(e, 'country', 20)
+                         }} />
                     </div>
                     <div className='m-4'>
                         <p className='h5 text-center'>Estado*</p>
@@ -285,17 +431,21 @@ function ModificarAlumno() {
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5 text-center'>Código postal*</p>
                         <p class='text-center'> {Student.postalCode.length +'/10 ' }</p>
-                        <input className="inputs" required type="text" name='postalCode' value={Student.postalCode} onChange={(e) => { SetStudent({...Student, postalCode: e.target.value}) }} />
+                        <input className="inputs" required type="text" name='postalCode' value={Student.postalCode} onChange={(e) => { }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Direccion*</p>
                         <p class='text-center'> {Student.address.length +'/80 ' }</p>
-                        <input className="inputs" type="text" required name='address' value={Student.address} onChange={(e) => { SetStudent({...Student, address: e.target.value}) }} />
+                        <input className="inputs" type="text" required name='address' value={Student.address} onChange={(e) => { 
+                            handleChange(e, 'address', 80)
+                         }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Teléfono de emergencia*</p>
                         <p class='text-center'> {Student.emergencyPhone.length +'/15 ' }</p>
-                        <input className="inputs" type='tel' required name='emergencyPhone' value={Student.emergencyPhone} onChange={(e) => { SetStudent({...Student, emergencyPhone: e.target.value}) }} />
+                        <input className="inputs" type='tel' required name='emergencyPhone' value={Student.emergencyPhone} onChange={(e) => { 
+                            handleChange(e, 'emergencyPhone', 15)
+                        }} />
                     </div>
                     <div className="m-4 align-items-center flex-column d-flex">
     <p className="h5">Razón de la visita</p>
@@ -305,7 +455,7 @@ function ModificarAlumno() {
         name="visitReason"
         value={Student.visitReason}
         onChange={(e) => {
-            SetStudent({ ...Student, visitReason: e.target.value });
+            handleChange(e, 'visitReason', 255)
             e.target.style.height = "auto"; // Restablece el tamaño
             e.target.style.height = `${e.target.scrollHeight}px`; // Ajusta el tamaño al contenido
         }}
@@ -321,7 +471,7 @@ function ModificarAlumno() {
         name="prevDiag"
         value={Student.prevDiag}
         onChange={(e) => {
-            SetStudent({ ...Student, prevDiag: e.target.value });
+            handleChange(e, 'prevDiag', 255)
             e.target.style.height = "auto";
             e.target.style.height = `${e.target.scrollHeight}px`;
         }}
@@ -337,7 +487,7 @@ function ModificarAlumno() {
         name="alergies"
         value={Student.alergies}
         onChange={(e) => {
-            SetStudent({ ...Student, alergies: e.target.value });
+            handleChange(e, 'alergies', 255)
             e.target.style.height = "auto";
             e.target.style.height = `${e.target.scrollHeight}px`;
         }}
@@ -353,7 +503,7 @@ function ModificarAlumno() {
         name="comments"
         value={Student.comments}
         onChange={(e) => {
-            SetStudent({ ...Student, comments: e.target.value });
+            handleChange(e, 'comments', 255)
             e.target.style.height = "auto";
             e.target.style.height = `${e.target.scrollHeight}px`;
         }}
@@ -362,7 +512,7 @@ function ModificarAlumno() {
 </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Sucursal</p>
-                        <select class='form-select border border-dark' name="idBranch"  value={branch} onChange={(e) => {SetBranch(parseInt(e.target.value))}} >
+                        <select class='form-select border border-dark' name="idBranch"  value={Student.branchId} onChange={(e) => {SetStudent({...Student, branchId:parseInt(e.target.value)})}} >
                           {branches.map(branch => (
                             <option key={branch.id} value={branch.id}>
                                 {branch.name}
@@ -389,6 +539,7 @@ function ModificarAlumno() {
                 
                 else{
                     SetOpen(false)
+                    setError('')
                 }
               }
             }}>Cerrar</button>
