@@ -430,26 +430,26 @@ function ModificarAlumno() {
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5 text-center'>Código postal*</p>
-                        <p class='text-center'> {Student.postalCode.length +'/10 ' }</p>
+                        <p class='text-center'> {sum.postalCode +'/10 ' }</p>
                         <input className="inputs" required type="text" name='postalCode' value={Student.postalCode} onChange={(e) => { }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Direccion*</p>
-                        <p class='text-center'> {Student.address.length +'/80 ' }</p>
+                        <p class='text-center'> {sum.address +'/80 ' }</p>
                         <input className="inputs" type="text" required name='address' value={Student.address} onChange={(e) => { 
                             handleChange(e, 'address', 80)
                          }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Teléfono de emergencia*</p>
-                        <p class='text-center'> {Student.emergencyPhone.length +'/15 ' }</p>
+                        <p class='text-center'> {sum.emergencyPhone +'/15 ' }</p>
                         <input className="inputs" type='tel' required name='emergencyPhone' value={Student.emergencyPhone} onChange={(e) => { 
                             handleChange(e, 'emergencyPhone', 15)
                         }} />
                     </div>
                     <div className="m-4 align-items-center flex-column d-flex">
     <p className="h5">Razón de la visita</p>
-    <p className="text-center">{Student.visitReason.length + "/255"}</p>
+    <p className="text-center">{sum.visitReason + "/255"}</p>
     <textarea
         className="form-control border border-black"
         name="visitReason"
@@ -465,7 +465,7 @@ function ModificarAlumno() {
 
 <div className="m-4 align-items-center flex-column d-flex">
     <p className="h5">Diagnóstico previo</p>
-    <p className="text-center">{Student.prevDiag.length + "/255"}</p>
+    <p className="text-center">{sum.prevDiag+ "/255"}</p>
     <textarea
         className="form-control border border-black"
         name="prevDiag"
@@ -481,7 +481,7 @@ function ModificarAlumno() {
 
 <div className="m-4 align-items-center flex-column d-flex">
     <p className="h5">Alergias</p>
-    <p className="text-center">{Student.alergies.length + "/255"}</p>
+    <p className="text-center">{sum.alergies + "/255"}</p>
     <textarea
         className="form-control border border-black"
         name="alergies"
@@ -497,7 +497,7 @@ function ModificarAlumno() {
 
 <div className="m-4 align-items-center flex-column d-flex">
     <p className="h5">Comentarios</p>
-    <p className="text-center">{Student.comments.length + "/255"}</p>
+    <p className="text-center">{sum.comments + "/255"}</p>
     <textarea
         className="form-control border border-black"
         name="comments"
