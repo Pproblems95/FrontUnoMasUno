@@ -7,6 +7,7 @@ import { Modal } from 'react-bootstrap'
 
 function ModificarUsuario() {
     let isValid = []
+    const doubleLetters = ['ñ', 'á', 'Á', 'é', 'É', 'í', 'Í', 'ó', 'Ó', 'ú', 'Ú', 'ü', 'Ü'];
     const [Student, SetStudent] = useState({
        name: '',
         patLastName: "",
@@ -16,6 +17,31 @@ function ModificarUsuario() {
         type: "",
         commission: 0
     })
+    const [counter, SetCounter] = useState({
+        username: 0,
+        name: 0,
+        patLastName: 0,
+        matLastName: 0,
+        phone: 0,
+    })
+    const [sum, SetSum] = useState({
+        username: 0,
+        name: 0,
+        patLastName: 0,
+        matLastName: 0,
+        phone: 0,
+    })
+
+    useEffect(() => {
+        SetSum((prevSum) => ({
+            ...prevSum,
+            username: Student.username.length + counter.username,
+            name: Student.name.length + counter.name,
+            patLastName: Student.patLastName.length + counter.patLastName,
+            matLastName: Student.matLastName.length + counter.matLastName,
+            phone: Student.phone.length + counter.phone,
+        }));
+    }, [Student, counter]);
     const [StudentRes, SetStudentRes] = useState(null)
     const [data, SetData] = useState(null)
     const types = ['admin', 'general', 'independiente']
@@ -95,7 +121,33 @@ function ModificarUsuario() {
     
     const navigate = useNavigate()
 
-    
+    const handleChange = (e, fieldName, maxLength) => {
+        const newValue = e.target.value;
+        const isDeleting = newValue.length < Student[fieldName].length;
+        if (!isDeleting && sum[fieldName] >= maxLength) {
+            return;
+        }
+        else if(isDeleting && sum[fieldName] >= maxLength){
+            const matches = Array.from(e.target.value).filter(char => doubleLetters.includes(char)).length;
+            SetCounter({ ...counter, [fieldName]: matches });
+            SetStudent({
+            ...Student,
+            [fieldName]: e.target.value
+            })
+        }
+        if (sum[fieldName] >= maxLength-1) {
+            const endsWithDoubleLetter = doubleLetters.some(letter => newValue.endsWith(letter));
+            if (endsWithDoubleLetter && !isDeleting) {
+              return;
+            }
+        }
+        if(newValue.length + counter[fieldName] > maxLength){
+            return
+        }
+        const matches = Array.from(e.target.value).filter(char => doubleLetters.includes(char)).length;
+        SetCounter({ ...counter, [fieldName]: matches });
+        SetStudent({ ...Student, [fieldName]: e.target.value})           
+    }
     
     if(loading){
         return(
@@ -126,15 +178,20 @@ function ModificarUsuario() {
                         isValid = Object.entries(Student).filter(([key, value]) => {
                            
                             switch (key) {
-                                case 'commission':
-                                    return false
+                                case 'username':
+                                    return sum.username < 3 || sum.username > 20;
                                 case 'name':
+                                    return sum.name < 3 || sum.name > 30;
                                 case 'patLastName':
-                                    return value.length <3 || value.length > 30
+                                    return sum.patLastName < 3 || sum.patLastName > 30;
                                 case 'matLastName':
-                                    return value.length > 30
+                                    return sum.matLastName > 30; // No es required, solo verificamos el máximo.
+                                case 'phone':
+                                    return sum.phone < 3 || sum.phone > 15;
+                                case 'type':
+                                    return false; // Campo especial, siempre retorna false.
                                 default:
-                                    return value.length < 3 || value.length > 20;
+                                    return false; // En caso de que la key no esté en la lista, retorna false.
                             }
                             
                         });
@@ -175,32 +232,27 @@ function ModificarUsuario() {
                         </div>
                      <div class='m-4 '>
                          <p class='h5 text-center'>Nombre*</p>
-                         <p class='text-center'>{Student.name.length+'/30'}</p>
-                         <input className="inputs" required type="text" name="name" id="name" value={Student.name} onChange={(e) => {SetStudent({
-                            ...Student,
-                            name: e.target.value
-                         })}}/>
+                         <p class='text-center'>{sum.name+'/30'}</p>
+                         <input className="inputs" required type="text" name="name" id="name" value={Student.name} onChange={(e) => {
+                            handleChange(e, 'name', 30)
+                         }}/>
                      </div>
                      <div class='m-4 '>
                          <p class='h5 text-center'>Apellido paterno*</p>
-                         <p class='text-center'>{Student.patLastName.length+'/30'}</p>
-                         <input className="inputs" required type="text" name='patLastName' value={Student.patLastName} onChange={(e) => {SetStudent({
-                            ...Student,
-                            patLastName: e.target.value
-                         })}}/>
+                         <p class='text-center'>{sum.patLastName+'/30'}</p>
+                         <input className="inputs" required type="text" name='patLastName' value={Student.patLastName} onChange={(e) => {
+                            handleChange(e, 'patLastName', 30)
+                         }}/>
                      </div>
                      <div class='m-4 '>
                          <p class='h5 text-center'>Apellido materno</p>
-                         <p class='text-center'>{Student.matLastName.length+'/30'}</p>
-                         <input className="inputs" required type="text" name='matLastName' value={Student.matLastName} onChange={(e) => {SetStudent({
-                            ...Student,
-                            matLastName: e.target.value
-                         })}}/>
+                         <p class='text-center'>{sum.matLastName+'/30'}</p>
+                         <input className="inputs" required type="text" name='matLastName' value={Student.matLastName} onChange={(e) => {handleChange(e, 'matLastName', 30)}}/>
                      </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Teléfono*</p>
-                        <p class='text-center'>{Student.phone.length+'/15'}</p>
-                        <input className="inputs" type='tel' required name='phone' value={Student.phone} onChange={(e) => { SetStudent({...Student, phone: e.target.value}) }} />
+                        <p class='text-center'>{sum.phone+'/15'}</p>
+                        <input className="inputs" type='tel' required name='phone' value={Student.phone} onChange={(e) => {handleChange(e, 'phone', 15)}} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Comisión</p>

@@ -166,7 +166,7 @@ function EliminarUsuario() {
                  
                      
                  <ul style={{listStyle:'none', padding:0, margin:0}}>
-                 {usersList.map((data) => <Item key={data.id} type={data.type} name={data.patLastName + ' ' + data.matLastName + ' ' + data.name} id={data.id}> </Item>)}
+                 {usersList.map((data) => <Item key={data.id} type={data.type} name={data.patLastName + ' ' + (data.matLastName || '')+ ' ' + data.name} id={data.id}> </Item>)}
                  </ul>
                  </div>
                  <div className="d-flex flex-wrap justify-content-center overflow-auto">

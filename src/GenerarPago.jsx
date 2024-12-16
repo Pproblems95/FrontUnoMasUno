@@ -6,6 +6,7 @@ import {  useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 
 function GenerarPago() {
+    const doubleLetters = ['ñ', 'á', 'Á', 'é', 'É', 'í', 'Í', 'ó', 'Ó', 'ú', 'Ú', 'ü', 'Ü'];
     const [data, SetData] = useState(null)
     const [loading, SetLoading] = useState(true)
     const [isOpen, SetOpen] = useState(false)
@@ -20,6 +21,51 @@ function GenerarPago() {
         idStudent: null,
         studentName: ''
     })
+    const [counter, SetCounter] = useState({
+        concept: 0,
+        method: 0
+    })
+    const [sum, SetSum] = useState({
+        concept: 0,
+        method: 0
+    })
+
+    useEffect(() => {
+        SetSum({...sum, concept: payment.concept.length + counter.concept})
+    }, [payment.concept, counter.concept])
+
+    useEffect(() => {
+        SetSum({...sum, method: payment.method.length + counter.method})
+    }, [payment.method, counter.method])
+
+    const handleChange = (e, fieldName, maxLength) => {
+        const newValue = e.target.value;
+        const isDeleting = newValue.length < payment[fieldName].length;
+        if (!isDeleting && sum[fieldName] >= maxLength) {
+            return;
+        }
+        else if(isDeleting && sum[fieldName] >= maxLength){
+            const matches = Array.from(e.target.value).filter(char => doubleLetters.includes(char)).length;
+            SetCounter({ ...counter, [fieldName]: matches });
+            SetPayment({
+            ...payment,
+            [fieldName]: e.target.value
+            })
+        }
+        if (sum[fieldName] >= maxLength-1) {
+            const endsWithDoubleLetter = doubleLetters.some(letter => newValue.endsWith(letter));
+            if (endsWithDoubleLetter && !isDeleting) {
+              return;
+            }
+        }
+        if(newValue.length + counter[fieldName] > maxLength){
+            return
+        }
+        const matches = Array.from(e.target.value).filter(char => doubleLetters.includes(char)).length;
+        SetCounter({ ...counter, [fieldName]: matches });
+        SetPayment({ ...payment, [fieldName]: e.target.value})           
+    }
+
     const [confirmation, SetConfirmation] = useState(null)
     const url = import.meta.env.VITE_URL
 
@@ -114,8 +160,11 @@ function GenerarPago() {
                      <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
                  </div>
                  <div style={{background:'#ffdcf0', }} class='d-flex flex-grow-1 rounded m-4 flex-column align-items-center justify-content-center' >
+                 <div class='d-flex align-self-end justify-content-end'>
+                            <p class='text-end'> * = campo obligatorio</p>
+                        </div>
                      <div class='m-4  d-flex flex-column'>
-                         <p class='h5 text-center'>Nombre del estudiante</p>
+                         <p class='h5 text-center'>Nombre del estudiante*</p>
                          <input className="inputs position-relative " type="text" value={payment.studentName} onChange={(e) => {
                            SetPayment({...payment, studentName:e.target.value})
                            if(payment.idStudent !== null){
@@ -153,19 +202,22 @@ function GenerarPago() {
          </ul>
      )}
                      </div>
+                     
                      <div class='m-4'>
-                         <p class='h5 text-center'>Concepto</p>
-                         <p class='text-center '>{payment.concept.length+'/20'}</p>
-                         <input className="inputs" type="text" value={payment.concept} onChange={(e) => {SetPayment({...payment, concept:e.target.value})}}/>
+                         <p class='h5 text-center'>Concepto*</p>
+                         <p class='text-center '>{sum.concept+'/20'}</p>
+                         <input className="inputs" type="text" value={payment.concept} onChange={(e) => {
+                            handleChange(e, 'concept', 20)
+                         }}/>
                      </div>
                      <div class='m-4'>
-                         <p class='h5 text-center'>Cantidad</p>
+                         <p class='h5 text-center'>Cantidad*</p>
                          <input className="inputs" type="number" value={payment.amount} onChange={(e) => {SetPayment({...payment, amount:e.target.value})}}/>
                      </div>
                      <div class='m-4 align-items-center flex-column d-flex'>
-                         <p class='h5'>Forma de pago</p>
+                         <p class='h5'>Forma de pago*</p>
                          <p class='text-center '>{payment.method.length+'/20'}</p>
-                         <input className="inputs" value={payment.method} type="text" onChange={(e) => {SetPayment({...payment, method:e.target.value})}}/>
+                         <input className="inputs" value={payment.method} type="text" onChange={(e) => {handleChange(e,'method', 20)}}/>
                      </div>
                      
                      <button id="button" class='align-self-end m-4 btn-lg btn btn-block' onClick={() => {
@@ -175,10 +227,16 @@ function GenerarPago() {
                              return
                          }
                          const isValid = Object.entries(payment).filter(([key, value]) => {
-                             if (key === "amount" || key === "idStudent" || key === 'studentName') {
-                                 return false; 
-                             }
-                             return value.length < 3 || value.length > 20;
+                            switch (key) {
+                                case 'concept':
+                                    return sum.concept < 3 || sum.concept > 20
+                                    
+                                case 'method': 
+                                    return sum.method < 3 || sum.method > 20
+                            
+                                default:
+                                    return false
+                            }
                          })
      
                          if (isValid.length > 0){

@@ -7,17 +7,34 @@ import { Modal } from "react-bootstrap";
 
 
 function RegistroGasto() {
+
     const navigate = useNavigate()
     const [isOpen, SetOpen] = useState(false)
     const [errorMessage, SetError] = useState('')
     const [data, SetData] = useState(null)
     const [loading, SetLoading] = useState(true)
     const [confirmation, SetConfirmation] = useState(null)
+    const doubleLetters = ['ñ', 'á', 'Á', 'é', 'É', 'í', 'Í', 'ó', 'Ó', 'ú', 'Ú', 'ü', 'Ü'];
     const [user, SetStudent] = useState({
         concept: "",
         amount: 0,
         method: ""
     })
+    const [counter, SetCounter] = useState({
+        concept: 0,
+        method:0
+    })
+    const [sum, SetSum] = useState({
+        concept:0,
+        method:0})
+
+    useEffect(() => {
+        SetSum({...sum, concept: user.concept.length + counter.concept})
+    }, [user.concept, counter.concept])
+
+    useEffect(() => {
+        SetSum({...sum, method: user.method.length + counter.method})
+    }, [user.method, counter.method])
     const url = import.meta.env.VITE_URL
 
     useEffect(() => {
@@ -62,6 +79,34 @@ function RegistroGasto() {
         }
     }, [confirmation])
 
+    const handleChange = (e, fieldName, maxLength) => {
+        const newValue = e.target.value;
+        const isDeleting = newValue.length < user[fieldName].length;
+        if (!isDeleting && sum[fieldName] >= maxLength) {
+            return;
+        }
+        else if(isDeleting && sum[fieldName] >= maxLength){
+            const matches = Array.from(e.target.value).filter(char => doubleLetters.includes(char)).length;
+            SetCounter({ ...counter, [fieldName]: matches });
+            SetStudent({
+            ...user,
+            [fieldName]: e.target.value
+            })
+        }
+        if (sum[fieldName] >= maxLength-1) {
+            const endsWithDoubleLetter = doubleLetters.some(letter => newValue.endsWith(letter));
+            if (endsWithDoubleLetter && !isDeleting) {
+              return;
+            }
+        }
+        if(newValue.length + counter[fieldName] > maxLength){
+            return
+        }
+        const matches = Array.from(e.target.value).filter(char => doubleLetters.includes(char)).length;
+        SetCounter({ ...counter, [fieldName]: matches });
+        SetStudent({ ...user, [fieldName]: e.target.value})           
+    }
+
     if(loading){
         (<p>Loading...</p>)
     }
@@ -80,15 +125,20 @@ function RegistroGasto() {
                          e.preventDefault()
      
                          const isValid = Object.entries(user).filter(([key, value]) => {
-                             if(typeof value === 'number'){
-                                 return false
-                             }
-                             if (key === 'amount')
-                             return value.length < 3 || value.length > 20
+                            switch (key) {
+                                case 'concept':
+                                    return sum.concept < 3 || sum.concept > 20
+                                    
+                                case 'method': 
+                                    return sum.method < 3 || sum.method > 20
+                            
+                                default:
+                                    return false
+                            }
                          })
      
                          if (isValid.length > 0) {
-                             SetError('Todos los campos deben tener por lo menos 3 carácteres')
+                             SetError('Todos los campos deben tener por lo menos 3 carácteres y no pasar de su límite especificado')
                          }
                          else {
                              const formData = new FormData(e.target)
@@ -107,25 +157,29 @@ function RegistroGasto() {
      
                          }
                      }}>
+                        <div class='d-flex align-self-end justify-content-end'>
+                            <p class='text-end'> * = campo obligatorio</p>
+                        </div>
                       <div className='m-4 align-items-center flex-column d-flex' >
-                         <p class='h5'>Concepto</p>
-                         <p class='text-center'>{user.concept.length+'/20'}</p>
-                         <input className="inputs" required type="text" name="concept" id="name" value={user.concept} onChange={(e) => {SetStudent({
-                            ...user,
-                            concept: e.target.value
-                         })}}/>
+                         <p class='h5'>Concepto*</p>
+                         <p class='text-center'>{sum.concept+'/20'}</p>
+                         <input className="inputs" required type="text" name="concept" id="name" value={user.concept} onChange={(e) => {
+                            handleChange(e, 'concept', 20)
+                         }}/>
                      </div>
                      <div className='m-4 align-items-center flex-column d-flex'>
-                         <p class='h5 text-center'>Cantidad</p>
+                         <p class='h5 text-center'>Cantidad*</p>
                          <input className="inputs" required type="number" name='amount' value={user.amount} onChange={(e) => {SetStudent({
                             ...user,
                             amount: e.target.value
                          })}}/>
                      </div>
                      <div className='m-4'>
-                        <p className='h5 text-center'>Método de pago</p>
-                        <p class='text-center'>{user.method.length+'/20'}</p>
-                        <input input className="inputs" required  name="method" value={user.method} onChange={(e) => {SetStudent({...user, method: e.target.value})}}></input>
+                        <p className='h5 text-center'>Método de pago*</p>
+                        <p class='text-center'>{sum.method+'/20'}</p>
+                        <input input className="inputs" required  name="method" value={user.method} onChange={(e) => {
+                            handleChange(e, 'method', 20)
+                        }}></input>
                     </div>
                    
                     <div className="m-4 d-flex justify-content-center">

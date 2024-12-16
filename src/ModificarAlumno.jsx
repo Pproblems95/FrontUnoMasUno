@@ -128,96 +128,21 @@ function ModificarAlumno() {
         SetSum((prevSum) => ({
             ...prevSum,
             name: Student.name.length + counter.name,
-        }));
-    }, [counter.name, Student.name]);
-    
-    useEffect(() => {
-        SetSum((prevSum) => ({
-            ...prevSum,
             patLastName: Student.patLastName.length + counter.patLastName,
-        }));
-    }, [counter.patLastName, Student.patLastName]);
-    
-    useEffect(() => {
-        SetSum((prevSum) => ({
-            ...prevSum,
             matLastName: Student.matLastName.length + counter.matLastName,
-        }));
-    }, [counter.matLastName, Student.matLastName]);
-    
-    useEffect(() => {
-        SetSum((prevSum) => ({
-            ...prevSum,
             momFullName: Student.momFullName.length + counter.momFullName,
-        }));
-    }, [counter.momFullName, Student.momFullName]);
-    
-    useEffect(() => {
-        SetSum((prevSum) => ({
-            ...prevSum,
             dadFullName: Student.dadFullName.length + counter.dadFullName,
-        }));
-    }, [counter.dadFullName, Student.dadFullName]);
-    
-    useEffect(() => {
-        SetSum((prevSum) => ({
-            ...prevSum,
             country: Student.country.length + counter.country,
-        }));
-    }, [counter.country, Student.country]);
-    
-    useEffect(() => {
-        SetSum((prevSum) => ({
-            ...prevSum,
             postalCode: Student.postalCode.length + counter.postalCode,
-        }));
-    }, [counter.postalCode, Student.postalCode]);
-    
-    useEffect(() => {
-        SetSum((prevSum) => ({
-            ...prevSum,
             address: Student.address.length + counter.address,
-        }));
-    }, [counter.address, Student.address]);
-    
-    useEffect(() => {
-        SetSum((prevSum) => ({
-            ...prevSum,
             emergencyPhone: Student.emergencyPhone.length + counter.emergencyPhone,
-        }));
-    }, [counter.emergencyPhone, Student.emergencyPhone]);
-    
-    useEffect(() => {
-        SetSum((prevSum) => ({
-            ...prevSum,
             visitReason: Student.visitReason.length + counter.visitReason,
-        }));
-    }, [counter.visitReason, Student.visitReason]);
-    
-    useEffect(() => {
-        SetSum((prevSum) => ({
-            ...prevSum,
             prevDiag: Student.prevDiag.length + counter.prevDiag,
-        }));
-    }, [counter.prevDiag, Student.prevDiag]);
-    
-    useEffect(() => {
-        SetSum((prevSum) => ({
-            ...prevSum,
             alergies: Student.alergies.length + counter.alergies,
-        }));
-    }, [counter.alergies, Student.alergies]);
-    
-    useEffect(() => {
-        SetSum((prevSum) => ({
-            ...prevSum,
             comments: Student.comments.length + counter.comments,
         }));
-    }, [counter.comments, Student.comments]);
-
-    useEffect(() => {
-        console.log(sum)
-    }, [sum])
+    }, [Student, counter]);
+    
     
     
 
@@ -431,7 +356,9 @@ function ModificarAlumno() {
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5 text-center'>Código postal*</p>
                         <p class='text-center'> {sum.postalCode +'/10 ' }</p>
-                        <input className="inputs" required type="text" name='postalCode' value={Student.postalCode} onChange={(e) => { }} />
+                        <input className="inputs" required type="text" name='postalCode' value={Student.postalCode} onChange={(e) => {
+                            handleChange(e, 'postalCode', 10)
+                         }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Direccion*</p>

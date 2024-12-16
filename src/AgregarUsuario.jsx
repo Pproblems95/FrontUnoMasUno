@@ -7,6 +7,7 @@ import { Modal } from "react-bootstrap";
 
 function AgregarUsuario() {
     const navigate = useNavigate()
+    const doubleLetters = ['ñ', 'á', 'Á', 'é', 'É', 'í', 'Í', 'ó', 'Ó', 'ú', 'Ú', 'ü', 'Ü'];
     const [isOpen, SetOpen] = useState(false)
     const [errorMessage, SetError] = useState('')
     const [data, SetData] = useState(null)
@@ -23,6 +24,35 @@ function AgregarUsuario() {
         type: "admin",
         commission: 0
     })
+    const [counter, SetCounter] = useState({
+        username: 0,
+        password: 0,
+        name: 0,
+        patLastName: 0,
+        matLastName: 0,
+        phone: 0,
+    })
+    const [sum, SetSum] = useState({
+        username: 0,
+        password: 0,
+        name: 0,
+        patLastName: 0,
+        matLastName: 0,
+        phone: 0,
+    })
+    useEffect(() => {
+        SetSum((prevSum) => ({
+            ...prevSum,
+            username: user.username.length + counter.username,
+            password: user.password.length + counter.password,
+            name: user.name.length + counter.name,
+            patLastName: user.patLastName.length + counter.patLastName,
+            matLastName: user.matLastName.length + counter.matLastName,
+            phone: user.phone.length + counter.phone,
+        }));
+    }, [user, counter]);
+
+
     const types = ['admin', 'general', 'independiente']
     const url = import.meta.env.VITE_URL
 
@@ -72,6 +102,34 @@ function AgregarUsuario() {
         }
     }, [confirmation])
 
+    const handleChange = (e, fieldName, maxLength) => {
+        const newValue = e.target.value;
+        const isDeleting = newValue.length < user[fieldName].length;
+        if (!isDeleting && sum[fieldName] >= maxLength) {
+            return;
+        }
+        else if(isDeleting && sum[fieldName] >= maxLength){
+            const matches = Array.from(e.target.value).filter(char => doubleLetters.includes(char)).length;
+            SetCounter({ ...counter, [fieldName]: matches });
+            SetUser({
+            ...user,
+            [fieldName]: e.target.value
+            })
+        }
+        if (sum[fieldName] >= maxLength-1) {
+            const endsWithDoubleLetter = doubleLetters.some(letter => newValue.endsWith(letter));
+            if (endsWithDoubleLetter && !isDeleting) {
+              return;
+            }
+        }
+        if(newValue.length + counter[fieldName] > maxLength){
+            return
+        }
+        const matches = Array.from(e.target.value).filter(char => doubleLetters.includes(char)).length;
+        SetCounter({ ...counter, [fieldName]: matches });
+        SetUser({ ...user, [fieldName]: e.target.value})           
+    }
+
     if(loading){
         (<p>Loading...</p>)
     }
@@ -100,26 +158,31 @@ function AgregarUsuario() {
      
                          const isValid = Object.entries(user).filter(([key, value]) => {
                              
-                             switch (key) {
-                                case 'commission':
-                                    return false
-                                case 'name':
-                                case 'patLastName':
-                                    return value.length < 3 || value.length >30
-                                case 'matLastName': 
-                                    return value.length > 30
-                                case 'phone': 
-                                    return value.length < 3 || value.length > 15
+
+                            switch (key) {
+                                case 'username':
+                                    return sum.username < 3 || sum.username > 20;
                                 case 'password':
-                                    return value.length < 3
+                                    return user.password.length < 3; // No tiene máximo, solo verificamos el mínimo.
+                                case 'name':
+                                    return sum.name < 3 || sum.name > 30;
+                                case 'patLastName':
+                                    return sum.patLastName < 3 || sum.patLastName > 30;
+                                case 'matLastName':
+                                    return sum.matLastName > 30; // No es required, solo verificamos el máximo.
+                                case 'phone':
+                                    return sum.phone < 3 || sum.phone > 15;
+                                case 'type':
+                                    return false; // Campo especial, siempre retorna false.
                                 default:
-                                    return value.length < 3 || value.length > 20
-                             }
+                                    return false; // En caso de que la key no esté en la lista, retorna false.
+                            }
+                            
                              
                          })
      
                          if (isValid.length > 0) {
-                             SetError('Todos los campos obligatorios deben tener al menos 3 caracteres y no pasar su límite.')
+                             SetError('Todos los campos obligatorios deben tener al menos 3 caracteres y no pasar su límite. Además, la comisión no puede ser mayor a 99.99')
                          }
                          else {
                             const formData = new FormData(e.target);
@@ -148,11 +211,10 @@ function AgregarUsuario() {
                         </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
                              <p className='h5'>Nombre de usuario*</p>
-                             <p class='text-center'>{user.username.length +'/20'}</p>
-                             <input className="inputs" required type="text" name='username' value={user.username} onChange={(e) => {SetUser({
-                                 ...user,
-                                 username:e.target.value
-                             })}}/>
+                             <p class='text-center'>{sum.username +'/20'}</p>
+                             <input className="inputs" required type="text" name='username' value={user.username} onChange={(e) => {
+                                handleChange(e, 'username', 20)
+                             }}/>
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
                              <p className='h5'>Contraseña*</p>
@@ -167,35 +229,31 @@ function AgregarUsuario() {
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
                              <p className='h5'>Nombre*</p>
-                             <p class='text-center'>{user.name.length +'/30'}</p>
-                             <input className="inputs" required type="text" name='name' value={user.name} onChange={(e) => {SetUser({
-                                 ...user,
-                                 name:e.target.value
-                             })}}/>
+                             <p class='text-center'>{sum.name +'/30'}</p>
+                             <input className="inputs" required type="text" name='name' value={user.name} onChange={(e) => {
+                                handleChange(e, 'name', 30)
+                             }}/>
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
                              <p className='h5'>Apellido paterno*</p>
-                             <p class='text-center'>{user.patLastName.length +'/30'}</p>
-                             <input className="inputs" required type="text" name='patLastName' value={user.patLastName} onChange={(e) => {SetUser({
-                                 ...user,
-                                 patLastName:e.target.value
-                             })}}/>
+                             <p class='text-center'>{sum.patLastName +'/30'}</p>
+                             <input className="inputs" required type="text" name='patLastName' value={user.patLastName} onChange={(e) => {
+                                handleChange(e, 'patLastName', 30)
+                             }}/>
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
                              <p className='h5'>Apellido materno</p>
-                             <p class='text-center'>{user.matLastName.length +'/30'}</p>
-                             <input className="inputs"  type="text" name='matLastName' value={user.matLastName} onChange={(e) => {SetUser({
-                                 ...user,
-                                 matLastName:e.target.value
-                             })}}/>
+                             <p class='text-center'>{sum.matLastName +'/30'}</p>
+                             <input className="inputs"  type="text" name='matLastName' value={user.matLastName} onChange={(e) => {
+                                handleChange(e, 'matLastName', 30)
+                             }}/>
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
                              <p className='h5'>Teléfono*</p>
-                             <p class='text-center'>{user.phone.length +'/15'}</p>
-                             <input className="inputs" required type="text" name='phone' value={user.phone} onChange={(e) => {SetUser({
-                                 ...user,
-                                 phone:e.target.value
-                             })}}/>
+                             <p class='text-center'>{sum.phone +'/15'}</p>
+                             <input className="inputs" required type="text" name='phone' value={user.phone} onChange={(e) => {
+                                handleChange(e, 'phone', 15)
+                             }}/>
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
                              <p className='h5'>Tipo de usuario*</p>

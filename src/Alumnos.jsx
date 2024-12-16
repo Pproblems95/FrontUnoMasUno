@@ -258,7 +258,7 @@ function Alumnos(){
                  <ul style={{listStyle:'none', padding:0, margin:0}}>
                     
                      {studentsList.map((student) =>  (
-                        <Item key={student.id} sucursal={student.branchName} name={student.patLastName + ' ' + student.matLastName + ' ' + student.name}  id={student.id}> </Item>))}
+                        <Item key={student.id} sucursal={student.branchName} name={student.patLastName + ' ' + (student.matLastName || '') + ' ' + student.name}  id={student.id}> </Item>))}
                 </ul>
                  </div>
                  <div class='d-flex flex-row, align-self-center' style={{}}>

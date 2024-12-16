@@ -9,6 +9,7 @@ import  estados from '../resources/estados.json'
 
 function RegistroSucursal() {
     const navigate = useNavigate()
+    const doubleLetters = ['ñ', 'á', 'Á', 'é', 'É', 'í', 'Í', 'ó', 'Ó', 'ú', 'Ú', 'ü', 'Ü'];
     const [isOpen, SetOpen] = useState(false)
     const [errorMessage, SetError] = useState('')
     const [data, SetData] = useState(null)
@@ -22,6 +23,33 @@ function RegistroSucursal() {
         postalCode: "",
         address: ""
     })
+    const [counter, SetCounter] = useState({
+        name:0,
+        country: 0,
+        postalCode: 0,
+        address: 0
+    })
+
+    const [sum, SetSum] = useState({
+        name:0,
+        country: 0,
+        postalCode: 0,
+        address: 0
+    })
+
+    useEffect(() => {
+        SetSum({...sum, name: counter.name + user.name.length})
+    }, [counter.name, user.name])
+    useEffect(() => {
+        SetSum({...sum, country: counter.country + user.country.length})
+    }, [counter.country, user.country])
+    useEffect(() => {
+        SetSum({...sum, postalCode: counter.postalCode + user.postalCode.length})
+    }, [counter.postalCode, user.postalCode])
+    useEffect(() => {
+        SetSum({...sum, address: counter.address + user.address.length})
+    }, [counter.address, user.address])
+
     const url = import.meta.env.VITE_URL
 
     useEffect(() => {
@@ -66,6 +94,34 @@ function RegistroSucursal() {
         }
     }, [confirmation])
 
+    const handleChange = (e, fieldName, maxLength) => {
+        const newValue = e.target.value;
+        const isDeleting = newValue.length < user[fieldName].length;
+        if (!isDeleting && sum[fieldName] >= maxLength) {
+            return;
+        }
+        else if(isDeleting && sum[fieldName] >= maxLength){
+            const matches = Array.from(e.target.value).filter(char => doubleLetters.includes(char)).length;
+            SetCounter({ ...counter, [fieldName]: matches });
+            SetStudent({
+            ...user,
+            [fieldName]: e.target.value
+            })
+        }
+        if (sum[fieldName] >= maxLength-1) {
+            const endsWithDoubleLetter = doubleLetters.some(letter => newValue.endsWith(letter));
+            if (endsWithDoubleLetter && !isDeleting) {
+              return;
+            }
+        }
+        if(newValue.length + counter[fieldName] > maxLength){
+            return
+        }
+        const matches = Array.from(e.target.value).filter(char => doubleLetters.includes(char)).length;
+        SetCounter({ ...counter, [fieldName]: matches });
+        SetStudent({ ...user, [fieldName]: e.target.value})           
+    }
+
     if(loading){
         (<p>Loading...</p>)
     }
@@ -90,13 +146,15 @@ function RegistroSucursal() {
 
                              switch (key) {
                                 case 'name':
-                                    return value.length < 3 || value.length > 40
+                                    return sum.name < 3 || sum.name > 40
                                 case 'postalCode':
-                                    return value.length < 3 || value.length > 10
+                                    return sum.postalCode < 3 || sum.postalCode > 10
                                 case 'address':
-                                    return value.length < 3 || value.length > 80
+                                    return sum.address < 3 || sum.address > 80
+                                    case 'country':
+                                    return sum.country < 3 || sum.country > 80
                                 default:
-                                    return value.length < 3 || value.length > 20
+                                    return false
                              }
                              
                          })
@@ -121,24 +179,25 @@ function RegistroSucursal() {
      
                          }
                      }}>
+                        <div class='d-flex align-self-end justify-content-end'>
+                            <p class='text-end'> * = campo obligatorio</p>
+                        </div>
                       <div className='m-4 align-items-center flex-column d-flex' >
-                         <p class='h5'>Nombre de la sucursal</p>
-                         <p class='text-center'>{user.name.length+'/40'}</p>
-                         <input className="inputs" required type="text" name="name" id="name" value={user.name} onChange={(e) => {SetStudent({
-                            ...user,
-                            name: e.target.value
-                         })}}/>
+                         <p class='h5'>Nombre de la sucursal*</p>
+                         <p class='text-center'>{sum.name+'/40'}</p>
+                         <input className="inputs" required type="text" name="name" id="name" value={user.name} onChange={(e) => {
+                            handleChange(e, 'name', 40)
+                         }}/>
                      </div>
                      <div className='m-4 align-items-center flex-column d-flex'>
-                         <p class='h5 text-center'>País</p>
-                         <p class='text-center'>{user.country.length+'/20'}</p>
-                         <input className="inputs" required type="text" name='country' value={user.country} onChange={(e) => {SetStudent({
-                            ...user,
-                            country: e.target.value
-                         })}}/>
+                         <p class='h5 text-center'>País*</p>
+                         <p class='text-center'>{sum.country+'/20'}</p>
+                         <input className="inputs" required type="text" name='country' value={user.country} onChange={(e) => {
+                            handleChange(e, 'country', 20)
+                         }}/>
                      </div>
                      <div className='m-4'>
-                        <p className='h5 text-center'>Estado</p>
+                        <p className='h5 text-center'>Estado*</p>
                         <select class='form-select border border-dark  '  name="state" value={user.state} onChange={(e) => {SetStudent({...user, state: e.target.value})}}>
                          {Object.keys(estados).map((llaves) => (
                             <option  key={llaves} value={llaves} >
@@ -148,7 +207,7 @@ function RegistroSucursal() {
                         </select>
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
-                        <p className='h5 text-center'>Ciudad</p>
+                        <p className='h5 text-center'>Ciudad*</p>
                         <select  class='form-select border border-dark  ' name="city"  value={user.city} onChange={(e) => { SetStudent({ ...user, city:e.target.value}) }}>
                         {estados[user.state].map((ciudad) => (
                             <option class='mw-25' key={ciudad} value={ciudad}>
@@ -158,14 +217,14 @@ function RegistroSucursal() {
                         </select>
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
-                        <p className='h5'>Codigo postal</p>
-                        <p class='text-center'>{user.postalCode.length+'/10'}</p>
-                        <input className="inputs" type='text' required name='postalCode' value={user.postalCode} onChange={(e) => { SetStudent({...user, postalCode: e.target.value}) }} />
+                        <p className='h5'>Codigo postal*</p>
+                        <p class='text-center'>{sum.postalCode+'/10'}</p>
+                        <input className="inputs" type='text' required name='postalCode' value={user.postalCode} onChange={(e) => { handleChange(e,'postalCode', 10) }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
-                        <p className='h5'>Dirección</p>
+                        <p className='h5'>Dirección*</p>
                         <p class='text-center'>{user.address.length+'/80'}</p>
-                        <input className="inputs" type='text' required name='address' value={user.address} onChange={(e) => { SetStudent({...user, address: e.target.value}) }} />
+                        <input className="inputs" type='text' required name='address' value={user.address} onChange={(e) => {handleChange(e, 'address', 80) }} />
                     </div>
                     <div>
                         
@@ -190,6 +249,7 @@ function RegistroSucursal() {
                <Modal.Footer>
                  <button class='btn btn-lg  align-self-center' style={{background:'black', color:'white'}} onClick={() => {
                    SetOpen(false)
+                   SetError('')
                    if(!confirmation.error){
                      location.reload()
                    }

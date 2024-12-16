@@ -66,7 +66,7 @@ function RegistroAlumno() {
     
     const navigate = useNavigate()
 
-    
+    const doubleLetters = ['ñ', 'á', 'Á', 'é', 'É', 'í', 'Í', 'ó', 'Ó', 'ú', 'Ú', 'ü', 'Ü'];
     const [Student, SetStudent] = useState({
         name: '',
         patLastName: '',
@@ -85,6 +85,154 @@ function RegistroAlumno() {
         comments: '',
         idBranch: 0
     })
+    const [counter, SetCounter] = useState({
+        name: 0,
+        patLastName: 0,
+        matLastName: 0,
+        momFullName: 0,
+        dadFullName: 0,
+        country: 0,
+        postalCode: 0,
+        address: 0,
+        emergencyPhone: 0,
+        visitReason: 0,
+        prevDiag: 0,
+        alergies: 0,
+        comments: 0,
+    })
+    const [sum, SetSum] = useState({
+        name: 0,
+        patLastName: 0,
+        matLastName: 0,
+        momFullName: 0,
+        dadFullName: 0,
+        country: 0,
+        postalCode: 0,
+        address: 0,
+        emergencyPhone: 0,
+        visitReason: 0,
+        prevDiag: 0,
+        alergies: 0,
+        comments: 0,})
+
+        useEffect(() => {
+            SetSum((prevSum) => ({
+                ...prevSum,
+                name: Student.name.length + counter.name,
+            }));
+        }, [counter.name, Student.name]);
+        
+        useEffect(() => {
+            SetSum((prevSum) => ({
+                ...prevSum,
+                patLastName: Student.patLastName.length + counter.patLastName,
+            }));
+        }, [counter.patLastName, Student.patLastName]);
+        
+        useEffect(() => {
+            SetSum((prevSum) => ({
+                ...prevSum,
+                matLastName: Student.matLastName.length + counter.matLastName,
+            }));
+        }, [counter.matLastName, Student.matLastName]);
+        
+        useEffect(() => {
+            SetSum((prevSum) => ({
+                ...prevSum,
+                momFullName: Student.momFullName.length + counter.momFullName,
+            }));
+        }, [counter.momFullName, Student.momFullName]);
+        
+        useEffect(() => {
+            SetSum((prevSum) => ({
+                ...prevSum,
+                dadFullName: Student.dadFullName.length + counter.dadFullName,
+            }));
+        }, [counter.dadFullName, Student.dadFullName]);
+        
+        useEffect(() => {
+            SetSum((prevSum) => ({
+                ...prevSum,
+                country: Student.country.length + counter.country,
+            }));
+        }, [counter.country, Student.country]);
+        
+        useEffect(() => {
+            SetSum((prevSum) => ({
+                ...prevSum,
+                postalCode: Student.postalCode.length + counter.postalCode,
+            }));
+        }, [counter.postalCode, Student.postalCode]);
+        
+        useEffect(() => {
+            SetSum((prevSum) => ({
+                ...prevSum,
+                address: Student.address.length + counter.address,
+            }));
+        }, [counter.address, Student.address]);
+        
+        useEffect(() => {
+            SetSum((prevSum) => ({
+                ...prevSum,
+                emergencyPhone: Student.emergencyPhone.length + counter.emergencyPhone,
+            }));
+        }, [counter.emergencyPhone, Student.emergencyPhone]);
+        
+        useEffect(() => {
+            SetSum((prevSum) => ({
+                ...prevSum,
+                visitReason: Student.visitReason.length + counter.visitReason,
+            }));
+        }, [counter.visitReason, Student.visitReason]);
+        
+        useEffect(() => {
+            SetSum((prevSum) => ({
+                ...prevSum,
+                prevDiag: Student.prevDiag.length + counter.prevDiag,
+            }));
+        }, [counter.prevDiag, Student.prevDiag]);
+        
+        useEffect(() => {
+            SetSum((prevSum) => ({
+                ...prevSum,
+                alergies: Student.alergies.length + counter.alergies,
+            }));
+        }, [counter.alergies, Student.alergies]);
+        
+        useEffect(() => {
+            SetSum((prevSum) => ({
+                ...prevSum,
+                comments: Student.comments.length + counter.comments,
+            }));
+        }, [counter.comments, Student.comments]);
+
+        const handleChange = (e, fieldName, maxLength) => {
+            const newValue = e.target.value;
+            const isDeleting = newValue.length < Student[fieldName].length;
+            if (!isDeleting && sum[fieldName] >= maxLength) {
+                return;
+            }
+            else if(isDeleting && sum[fieldName] >= maxLength){
+                const matches = Array.from(e.target.value).filter(char => doubleLetters.includes(char)).length;
+                SetCounter({ ...counter, [fieldName]: matches });
+                SetStudent({
+                ...Student,
+                [fieldName]: e.target.value
+                })
+            }
+            if (sum[fieldName] >= maxLength-1) {
+                const endsWithDoubleLetter = doubleLetters.some(letter => newValue.endsWith(letter));
+                if (endsWithDoubleLetter && !isDeleting) {
+                  return;
+                }
+            }
+            if(newValue.length + counter[fieldName] > maxLength){
+                return
+            }
+            const matches = Array.from(e.target.value).filter(char => doubleLetters.includes(char)).length;
+            SetCounter({ ...counter, [fieldName]: matches });
+            SetStudent({ ...Student, [fieldName]: e.target.value})           
+        }
     if(loading){
         return(
             <p>loading...</p>
@@ -106,28 +254,43 @@ function RegistroAlumno() {
                         e.preventDefault();
                         
                         isValid = Object.entries(Student).filter(([key, value]) => {
-                            if (typeof value === 'number') {
-                                return false;
-                            }
-                            if(key === 'branchName'){
-                                return false
-                            }
                             switch (key) {
-                                case 'alergies':
-                                case 'visitReason':
-                                case 'comments':
-                                case 'prevDiag':
-                                    return value.length > 255;
-                                case 'momFullName':
-                                case 'dadFullName':
-                                    return value.length > 50
-                                case 'address':
-                                    return value.length < 3 || value.length > 50;
+                                case 'name':
+                                    return sum.name < 3 || sum.name > 30;
+                                case 'patLastName': 
+                                    return sum.patLastName < 3 || sum.patLastName > 30;
                                 case 'matLastName':
-                                    return value > 30
+                                    return sum.matLastName < 3 || sum.matLastName > 30;
+                                case 'momFullName':
+                                    return sum.momFullName < 3 || sum.momFullName > 50;
+                                case 'dadFullName':
+                                    return sum.dadFullName < 3 || sum.dadFullName > 50;
+                                case 'country':
+                                    return sum.country < 3 || sum.country > 20;
+                                case 'state':
+                                    return sum.state < 3 || sum.state > 20;
+                                case 'city':
+                                    return sum.city < 3 || sum.city > 20;
+                                case 'postalCode':
+                                    return sum.postalCode < 3 || sum.postalCode > 10;
+                                case 'address':
+                                    return sum.address < 3 || sum.address > 80;
+                                case 'emergencyPhone':
+                                    return sum.emergencyPhone < 3 || sum.emergencyPhone > 15;
+                                case 'visitReason':
+                                    return sum.visitReason > 255;
+                                case 'prevDiag':
+                                    return sum.prevDiag > 255;
+                                case 'alergies':
+                                    return sum.alergies > 255;
+                                case 'comments':
+                                    return sum.comments > 255;
+                                case 'idBranch':
+                                    return false;
                                 default:
-                                    return value.length < 3 || value.length > 20;
-                            }})
+                                    return false;  
+                            }
+                            })
                        
                         if(isValid.length > 0){
                             const invalidFields = isValid.map(([key]) => key).join(', ');
@@ -162,43 +325,46 @@ function RegistroAlumno() {
                         <div class='align-self-end'>
                         <p class=''> * = campo obligatorio</p>
                         </div>
-                     <div class='m-4 '>
+                        <div class='m-4 '>
                          <p class='h5'>Nombre del alumno* </p>
-                         <p class='text-center'> {Student.name.length +'/20' }</p>
-                         <input className="inputs" required type="text" name="name" id="name" value={Student.name} onChange={(e) => {SetStudent({
-                            ...Student,
-                            name: e.target.value
-                         })}}/>
+                         <p class='text-center'> {(sum.name) +'/20' }</p>
+                         <input className="inputs" required type="text" name="name" id="name" value={Student.name} onChange={(e) => {
+                            handleChange(e, 'name', 20)}}/>
                      </div>
                      <div class='m-4 '>
                          <p class='h5 text-center'>Apellido paterno* </p>
-                         <p class='text-center'> {Student.patLastName.length +'/30 ' }</p>
-                         <input className="inputs"  required type="text" name='patLastName' value={Student.patLastName} onChange={(e) => {SetStudent({
-                            ...Student,
-                            patLastName: e.target.value
-                         })}}/>
+                         <p class='text-center'> {sum.patLastName+'/30 ' }</p>
+                         <input className="inputs"  required type="text" name='patLastName' value={Student.patLastName} onChange={(e) => {
+                            handleChange(e,'patLastName', 30)
+                           }}/>
                      </div>
                      <div class='m-4 '>
                          <p class='h5 text-center'>Apellido materno</p>
-                         <p class='text-center'> {Student.matLastName.length +'/30' }</p>
-                         <input className="inputs"  type="text" name='matLastName' value={Student.matLastName} onChange={(e) => {SetStudent({
-                            ...Student,
-                            matLastName: e.target.value
-                         })}}/>
+                         <p class='text-center'> {sum.matLastName +'/30' }</p>
+                         <input className="inputs"  type="text" name='matLastName' value={Student.matLastName} onChange={(e) => {
+                            handleChange(e, 'matLastName', 30)
+                         }}/>
                      </div>
                      <div className='m-4 align-items-center d-flex flex-column'>
                         <p className='h5'>Nombre completo de la mamá</p>
-                        <p class='text-center'> {Student.momFullName.length +'/50' }</p>
-                        <input className="inputs"  type="text" name='momFullName' value={Student.momFullName} onChange={(e) => { SetStudent({...Student, momFullName: e.target.value}) }} />
+                        <p class='text-center'> {sum.momFullName +'/50' }</p>
+                        <input className="inputs"  type="text" name='momFullName' value={Student.momFullName} onChange={(e) => {
+                            handleChange(e, 'momFullName', 50)
+                         }} />
                     </div>
                     <div className='m-4 align-items-center d-flex flex-column'>
                         <p className='h5'>Nombre completo del papá</p>
                         {Student.dadFullName.length +'/50' }
-                        <input className="inputs" type="text" name='dadFullName' value={Student.dadFullName} onChange={(e) => { SetStudent({...Student, dadFullName: e.target.value}) }} />
+                        <input className="inputs" type="text" name='dadFullName' value={Student.dadFullName} onChange={(e) => { 
+                            handleChange(e, 'dadFullName', 50)
+                         }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>País de origen*</p>
-                        <input className="inputs" required type='text' name='country' value={Student.country} onChange={(e) => { SetStudent({...Student, country: e.target.value}) }} />
+                        <p class='text-center'> {sum.country +'/15' }</p>
+                        <input className="inputs" required type='text' name='country' value={Student.country} onChange={(e) => { 
+                            handleChange(e, 'country', 20)
+                         }} />
                     </div>
                     <div className='m-4'>
                         <p className='h5 text-center'>Estado*</p>
@@ -222,28 +388,34 @@ function RegistroAlumno() {
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5 text-center'>Código postal*</p>
-                        <p class='text-center'> {Student.postalCode.length +'/10 ' }</p>
-                        <input className="inputs" required type="text" name='postalCode' value={Student.postalCode} onChange={(e) => { SetStudent({...Student, postalCode: e.target.value}) }} />
+                        <p class='text-center'> {sum.postalCode +'/10 ' }</p>
+                        <input className="inputs" required type="text" name='postalCode' value={Student.postalCode} onChange={(e) => {
+                            handleChange(e, 'postalCode', 10)
+                         }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Direccion*</p>
-                        <p class='text-center'> {Student.address.length +'/80 ' }</p>
-                        <input className="inputs" type="text" required name='address' value={Student.address} onChange={(e) => { SetStudent({...Student, address: e.target.value}) }} />
+                        <p class='text-center'> {sum.address +'/80 ' }</p>
+                        <input className="inputs" type="text" required name='address' value={Student.address} onChange={(e) => { 
+                            handleChange(e, 'address', 80)
+                         }} />
                     </div>
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Teléfono de emergencia*</p>
-                        <p class='text-center'> {Student.emergencyPhone.length +'/15 ' }</p>
-                        <input className="inputs" type='tel' required name='emergencyPhone' value={Student.emergencyPhone} onChange={(e) => { SetStudent({...Student, emergencyPhone: e.target.value}) }} />
+                        <p class='text-center'> {sum.emergencyPhone +'/15 ' }</p>
+                        <input className="inputs" type='tel' required name='emergencyPhone' value={Student.emergencyPhone} onChange={(e) => { 
+                            handleChange(e, 'emergencyPhone', 15)
+                        }} />
                     </div>
                     <div className="m-4 align-items-center flex-column d-flex">
     <p className="h5">Razón de la visita</p>
-    <p className="text-center">{Student.visitReason.length + "/255"}</p>
+    <p className="text-center">{sum.visitReason + "/255"}</p>
     <textarea
         className="form-control border border-black"
         name="visitReason"
         value={Student.visitReason}
         onChange={(e) => {
-            SetStudent({ ...Student, visitReason: e.target.value });
+            handleChange(e, 'visitReason', 255)
             e.target.style.height = "auto"; // Restablece el tamaño
             e.target.style.height = `${e.target.scrollHeight}px`; // Ajusta el tamaño al contenido
         }}
@@ -253,13 +425,13 @@ function RegistroAlumno() {
 
 <div className="m-4 align-items-center flex-column d-flex">
     <p className="h5">Diagnóstico previo</p>
-    <p className="text-center">{Student.prevDiag.length + "/255"}</p>
+    <p className="text-center">{sum.prevDiag+ "/255"}</p>
     <textarea
         className="form-control border border-black"
         name="prevDiag"
         value={Student.prevDiag}
         onChange={(e) => {
-            SetStudent({ ...Student, prevDiag: e.target.value });
+            handleChange(e, 'prevDiag', 255)
             e.target.style.height = "auto";
             e.target.style.height = `${e.target.scrollHeight}px`;
         }}
@@ -269,13 +441,13 @@ function RegistroAlumno() {
 
 <div className="m-4 align-items-center flex-column d-flex">
     <p className="h5">Alergias</p>
-    <p className="text-center">{Student.alergies.length + "/255"}</p>
+    <p className="text-center">{sum.alergies + "/255"}</p>
     <textarea
         className="form-control border border-black"
         name="alergies"
         value={Student.alergies}
         onChange={(e) => {
-            SetStudent({ ...Student, alergies: e.target.value });
+            handleChange(e, 'alergies', 255)
             e.target.style.height = "auto";
             e.target.style.height = `${e.target.scrollHeight}px`;
         }}
@@ -285,13 +457,13 @@ function RegistroAlumno() {
 
 <div className="m-4 align-items-center flex-column d-flex">
     <p className="h5">Comentarios</p>
-    <p className="text-center">{Student.comments.length + "/255"}</p>
+    <p className="text-center">{sum.comments + "/255"}</p>
     <textarea
         className="form-control border border-black"
         name="comments"
         value={Student.comments}
         onChange={(e) => {
-            SetStudent({ ...Student, comments: e.target.value });
+            handleChange(e, 'comments', 255)
             e.target.style.height = "auto";
             e.target.style.height = `${e.target.scrollHeight}px`;
         }}
