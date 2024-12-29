@@ -3,7 +3,6 @@ import logo from '../images/logonofondo.png'
 import './RegistroAlumno.css'
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { use } from "react";
 
 
 function Item(props){
@@ -94,11 +93,8 @@ function HistorialPagos() {
         if(data != null){
             if(data.error){
                 navigate("/")
+                return
             }
-            else if(!data.body.type === "admin"){
-                navigate('../menu')
-            }
-            else if(data.body.type === "admin"){
                 fetch(url+'payments/all/'+(isPressed+1), {
                     method:'GET',
                     credentials:'include'
@@ -106,7 +102,7 @@ function HistorialPagos() {
                 .then((res) => {return res.json()})
                 .then((res) => {SetUsers(res)})
                 .catch((e) => {console.log(e)})
-            }
+            
         }
     }, [data])
 

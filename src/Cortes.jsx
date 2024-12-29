@@ -212,7 +212,7 @@ function Cortes(){
         <div style={{background:'#ffdcf0', }} class='d-flex flex-grow-1 rounded m-1 flex-column text-wrap'   >
             {response === null || response.error === true ? (<p class='h5 text-center'>Aquí aparecerán tus gastos.</p>) : (
             <> 
-            {audit.payments.map((payment) => {return(
+            {audit.expenditures.map((payment) => {return(
 
           <div  class=" border-black border-top row">
           <div  class="col-6">

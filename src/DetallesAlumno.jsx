@@ -47,7 +47,6 @@ function DetallesAlumno() {
     useEffect(() => {
         if(student != null){
             if(student.error){
-                SetLoading(false)
                 SetError('Ocurrió un error cargando al estudiante, por favor inténtalo más tarde.')
             }
             SetLoading(false)
@@ -79,11 +78,11 @@ function DetallesAlumno() {
             <div style={{background:'#ffdcf0', }} class='d-flex flex-grow-1 rounded m-1 flex-column text-wrap' >
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Nombre del alumno: </p>
-                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.name}</p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.name || 'No registrado'}</p>
                 </div>     
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Apellido paterno </p>
-                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.patLastName}</p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.patLastName || 'No registrado'}</p>
                 </div>   
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Apellido materno </p>
@@ -91,19 +90,19 @@ function DetallesAlumno() {
                 </div>   
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Nombre del papá </p>
-                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.patLastName || 'No registrado'}</p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.dadFullName || 'No registrado'}</p>
                 </div>   
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Nombre de la mamá </p>
-                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.patLastName || 'No registrado'}</p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.momFullName || 'No registrado'}</p>
                 </div>   
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Dirección: </p>
-                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.address}</p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.address || 'No registrado'}</p>
                 </div>   
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Teléfono de emergencia: </p>
-                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.emergencyPhone}</p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.emergencyPhone || 'No registrado'}</p>
                 </div>   
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Motivo inicial de la visita: </p>
@@ -123,11 +122,11 @@ function DetallesAlumno() {
                 </div>    */}
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Comentarios: </p>
-                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.comment || 'Ninguno'}</p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.comments || 'Ninguno'}</p>
                 </div>   
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Sucursal perteneciente: </p>
-                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.branchName}</p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.branchName || 'No registrada'}</p>
                 </div>      
                 
             </div>

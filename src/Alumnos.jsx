@@ -42,7 +42,6 @@ function Item(props){
 }
 
 function Alumnos(){
-    let test = ''
     const [isPressed, SetPressed] = useState(0)
     const [numberOfPages, SetNumber] = useState(0)
     const [loading, SetLoading] = useState(true)
@@ -60,7 +59,7 @@ function Alumnos(){
         ending: false
     })
     useEffect(() => {
-        fetch(url+'auth/check', {
+        fetch(url+'auth/check', { //le quite una c a check
             method: 'GET',
             credentials: 'include',
         })
@@ -82,7 +81,8 @@ function Alumnos(){
               .catch((e) => {console.log(e)}) 
             }
             else {
-                navigate("/")
+                SetErrorScreen(true)
+                SetLoading(false)
             }
         }
         console.log(students)
@@ -92,7 +92,13 @@ function Alumnos(){
             if(students.error){
                 SetErrorScreen(true)
                 SetLoading(false)
+                return
+            }
 
+            if(students.body.numberOfPages === 0){
+                SetStudentsList([])
+                SetLoading(false)
+                return
             }
             
             SetNumber(students.body.numberOfPages)
@@ -183,10 +189,12 @@ function Alumnos(){
                                  <p class='h3 align-self-center ' >Lista de alumnos</p>
                                  <img src={logo} class='img-fluid align-self-center' alt='logo centro educativo'style={{height:100, width:90,  }}/>
                              </div>
-                             <div style={{ }} class='d-flex flex-grow-1  m-1 flex-column ' >
-                                <p class=' h-3 text-center'> Ocurrió un error, por favor inténtalo de nuevo más tarde. </p>
-                                <button class='align-self-center btn ' style={{background:'black', color:'white'}}>Regresar</button>
-                             </div>
+                                <div class='d-flex flex-column justify-content-center'>
+                                    <p class='h4 text-center'>Ocurrió un error inesperado</p>
+                                    <button class='btn btn-dark align-self-center' onClick={() => {
+                                        navigate('../menu')
+                                    }}>Regresar</button>
+                                </div>
                         </main>)
         }
         return(
@@ -258,7 +266,7 @@ function Alumnos(){
                  <ul style={{listStyle:'none', padding:0, margin:0}}>
                     
                      {studentsList.map((student) =>  (
-                        <Item key={student.id} sucursal={student.branchName} name={student.patLastName + ' ' + (student.matLastName || '') + ' ' + student.name}  id={student.id}> </Item>))}
+                        <Item key={student.id} sucursal={student.branchName || 'Sin registros'} name={student.patLastName + ' ' + (student.matLastName || '') + ' ' + student.name}  id={student.id}> </Item>))}
                 </ul>
                  </div>
                  <div class='d-flex flex-row, align-self-center' style={{}}>

@@ -14,7 +14,7 @@ function RegistroGasto() {
     const [data, SetData] = useState(null)
     const [loading, SetLoading] = useState(true)
     const [confirmation, SetConfirmation] = useState(null)
-    const doubleLetters = ['ñ', 'á', 'Á', 'é', 'É', 'í', 'Í', 'ó', 'Ó', 'ú', 'Ú', 'ü', 'Ü'];
+    const doubleLetters = ['ñ', 'á', 'Á', 'é', 'É', 'í', 'Í', 'ó', 'Ó', 'ú', 'Ú', 'ü', 'Ü', '!','¡','?','¿','.',',',';',':',];
     const [user, SetStudent] = useState({
         concept: "",
         amount: 0,

@@ -83,7 +83,14 @@ function ModificarAlumno() {
                     credentials: 'include',
                 })
                 .then((res) => {return res.json()})
-                .then(res => SetBranches(res.body.branches))
+                .then(res => {
+                    if(res.error || res.body.length === 0){
+                        SetBranches([])
+                        return
+                    }
+                    else {
+                    SetBranches(res.body.branches)}})
+                .catch((e) => console.log(e))
 
                 fetch(url+'students/searchId/'+params.IdAlumno, {
                     method: 'GET',

@@ -66,7 +66,7 @@ function RegistroAlumno() {
     
     const navigate = useNavigate()
 
-    const doubleLetters = ['ñ', 'á', 'Á', 'é', 'É', 'í', 'Í', 'ó', 'Ó', 'ú', 'Ú', 'ü', 'Ü'];
+    const doubleLetters = ['ñ', 'á', 'Á', 'é', 'É', 'í', 'Í', 'ó', 'Ó', 'ú', 'Ú', 'ü', 'Ü', '!','¡','?','¿','.',',',';',':',];
     const [Student, SetStudent] = useState({
         name: '',
         patLastName: '',

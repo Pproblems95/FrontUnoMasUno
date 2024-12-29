@@ -1,7 +1,7 @@
 import { FaArrowAltCircleLeft } from "react-icons/fa";
 import logo from '../images/logonofondo.png'
 import './RegistroAlumno.css'
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 
@@ -102,7 +102,13 @@ function Sucursales() {
                     credentials:'include'
                 })
                 .then((res) => {return res.json()})
-                .then((res) => {SetUsers(res)})
+                .then((res) => {
+                    if(res.error){
+                        SetErrorScreen(true)
+                        SetLoading(false)
+                        return
+                    }
+                    SetUsers(res)})
                 .catch((e) => {console.log(e)})
             }
         }
@@ -112,6 +118,11 @@ function Sucursales() {
         if(users !== null){
                 if(users.error){
                     SetErrorScreen(true)
+                    SetLoading(false)
+                    return
+                }
+                if(users.body.branches.length === 0){
+                    SetUsersList([])
                     SetLoading(false)
                     return
                 }
@@ -184,7 +195,7 @@ function Sucursales() {
                  
                      
                  <ul style={{listStyle:'none', padding:0, margin:0}}>
-                 {usersList.map((data) => <Item key={data.id}  country={data.country} city={data.city} name={data.name} id={data.id}> </Item>)}
+                 {usersList.map((data) => <Item key={data.id || 0}  country={data.country || ''} city={data.city||''} name={data.name || ''} id={data.id || 0}> </Item>)}
                  </ul>
                  </div>
                 <div className="d-flex flex-wrap justify-content-center overflow-auto">

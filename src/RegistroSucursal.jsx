@@ -9,7 +9,7 @@ import  estados from '../resources/estados.json'
 
 function RegistroSucursal() {
     const navigate = useNavigate()
-    const doubleLetters = ['ñ', 'á', 'Á', 'é', 'É', 'í', 'Í', 'ó', 'Ó', 'ú', 'Ú', 'ü', 'Ü'];
+    const doubleLetters = ['ñ', 'á', 'Á', 'é', 'É', 'í', 'Í', 'ó', 'Ó', 'ú', 'Ú', 'ü', 'Ü', '!','¡','?','¿','.',',',';',':',];
     const [isOpen, SetOpen] = useState(false)
     const [errorMessage, SetError] = useState('')
     const [data, SetData] = useState(null)
@@ -38,17 +38,15 @@ function RegistroSucursal() {
     })
 
     useEffect(() => {
-        SetSum({...sum, name: counter.name + user.name.length})
-    }, [counter.name, user.name])
-    useEffect(() => {
-        SetSum({...sum, country: counter.country + user.country.length})
-    }, [counter.country, user.country])
-    useEffect(() => {
-        SetSum({...sum, postalCode: counter.postalCode + user.postalCode.length})
-    }, [counter.postalCode, user.postalCode])
-    useEffect(() => {
-        SetSum({...sum, address: counter.address + user.address.length})
-    }, [counter.address, user.address])
+        SetSum((prevSum) => ({
+            ...prevSum,
+            name: user.name.length + counter.name,
+            country: user.country.length + counter.country,
+            postalCode: user.postalCode.length + counter.postalCode,
+            address: user.address.length + counter.address,
+        }));
+    }, [user, counter]);
+    
 
     const url = import.meta.env.VITE_URL
 
