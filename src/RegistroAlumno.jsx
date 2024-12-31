@@ -8,6 +8,7 @@ import  estados from '../resources/estados.json'
 
 function RegistroAlumno() {
     let isValid = []
+    const [conStates, SetConStates] = useState(false)
     const [data, SetData] = useState(null)
     const [loading, SetLoading] = useState(true)
     const [isOpen, SetOpen] = useState(false)
@@ -34,7 +35,12 @@ function RegistroAlumno() {
                     credentials: 'include',
                 })
                 .then((res) => {return res.json()})
-                .then(res => SetBranches(res.body.branches))
+                .then(res => {
+                    if(res.error){
+                        SetConStates(true)
+                        return
+                    }
+                    SetBranches(res.body.branches)})
             }
             else{
                 console.log('login fallido')
@@ -60,6 +66,12 @@ function RegistroAlumno() {
         if(errorMessage !== '')
             SetOpen(true)
     }, [errorMessage])
+
+    useEffect(() => {
+        console.log(conStates)
+    }, [conStates])
+
+
 
 
     
@@ -473,12 +485,14 @@ function RegistroAlumno() {
 
                     <div className='m-4 align-items-center flex-column d-flex'>
                         <p className='h5'>Sucursal</p>
-                        <select class='form-select border border-dark' name="idBranch">
-                          {branches.map(branch => (
+                        <select required class='form-select border border-dark' name="idBranch">
+                          {!conStates ? (branches.map(branch => (
                             <option key={branch.id} value={branch.id}>
                                 {branch.name}
                             </option>
-                          ))}
+                          ))) : (<option disabled>
+                            No hay sucursales disponibles.
+                          </option>)}
                         </select>
                     </div>
                     <button id="button" type='submit' className='align-self-center m-4 btn-lg btn btn-block'>Registrar alumno</button>
