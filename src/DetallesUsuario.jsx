@@ -101,7 +101,7 @@ function DetallesUsuario() {
                 </div>   
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Comisión </p>
-                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.commission !== null ? student.prevDiag : 'No registrada'}</p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.commission !== null ? student.commission : 'No registrada'}</p>
                 </div>   
                 {/* <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Cuál: </p>

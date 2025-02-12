@@ -272,11 +272,11 @@ function RegistroAlumno() {
                                 case 'patLastName': 
                                     return sum.patLastName < 3 || sum.patLastName > 30;
                                 case 'matLastName':
-                                    return sum.matLastName < 3 || sum.matLastName > 30;
+                                    return sum.matLastName > 30;
                                 case 'momFullName':
-                                    return sum.momFullName < 3 || sum.momFullName > 50;
+                                    return sum.momFullName > 50;
                                 case 'dadFullName':
-                                    return sum.dadFullName < 3 || sum.dadFullName > 50;
+                                    return sum.dadFullName > 50;
                                 case 'country':
                                     return sum.country < 3 || sum.country > 20;
                                 case 'state':
@@ -306,11 +306,12 @@ function RegistroAlumno() {
                        
                         if(isValid.length > 0){
                             const invalidFields = isValid.map(([key]) => key).join(', ');
-                            SetConfirmation(true)
+                            console.log(invalidFields)
                             setError('Todos los campos obligatorios deben tener al menos 3 caracteres y no superar su límite especificado. ') //fix sign
                             return
                         }
                         else{
+                            console.log('me ejecute')
                             const formData = new FormData(e.target);
                             let dataObject = Object.fromEntries(formData);
                             dataObject = Object.fromEntries(
@@ -318,6 +319,7 @@ function RegistroAlumno() {
                             );
 
                             const payload = JSON.stringify(dataObject);
+                            console.log(payload)
                             fetch(url+'students', {
                                 method:'POST',
                                 credentials:'include',

@@ -237,9 +237,9 @@ function ModificarAlumno() {
                                 case 'matLastName':
                                     return sum.matLastName < 3 || sum.matLastName > 30;
                                 case 'momFullName':
-                                    return sum.momFullName < 3 || sum.momFullName > 50;
+                                    return sum.momFullName > 50;
                                 case 'dadFullName':
-                                    return sum.dadFullName < 3 || sum.dadFullName > 50;
+                                    return sum.dadFullName > 50;
                                 case 'country':
                                     return sum.country < 3 || sum.country > 20;
                                 case 'state':
