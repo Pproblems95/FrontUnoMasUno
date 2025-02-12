@@ -7,7 +7,7 @@ import { Modal } from "react-bootstrap";
 
 function AgregarUsuario() {
     const navigate = useNavigate()
-    const doubleLetters = ['ñ', 'á', 'Á', 'é', 'É', 'í', 'Í', 'ó', 'Ó', 'ú', 'Ú', 'ü', 'Ü'];
+    const doubleLetters = ['ñ', 'á', 'Á', 'é', 'É', 'í', 'Í', 'ó', 'Ó', 'ú', 'Ú', 'ü', 'Ü', '?', '¿', '!', '¡', ';', ':', ',', '.'];
     const [isOpen, SetOpen] = useState(false)
     const [errorMessage, SetError] = useState('')
     const [data, SetData] = useState(null)
