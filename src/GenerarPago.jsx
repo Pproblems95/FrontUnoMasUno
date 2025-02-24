@@ -21,6 +21,7 @@ function GenerarPago() {
         idStudent: null,
         studentName: ''
     })
+    const [finalPayment, SetFinalPayment] = useState(null)
     const [counter, SetCounter] = useState({
         concept: 0,
         method: 0
@@ -29,6 +30,8 @@ function GenerarPago() {
         concept: 0,
         method: 0
     })
+    const [VconfirmationButton, SetVConfirmationButton] = useState(false)
+    const [confirmationButton, SetConfirmationButton] = useState(false)
 
     useEffect(() => {
         SetSum({...sum, concept: payment.concept.length + counter.concept})
@@ -138,6 +141,25 @@ function GenerarPago() {
         SetSuggestions(suggestionsRes)
     }, [suggestionsRes]);
 
+    useEffect(() => {
+        if(confirmationButton){
+            const paymentData = { ...payment };
+            delete paymentData.studentName;
+                        
+                         fetch(url+'payments', {
+                             method:'POST', 
+                             credentials: 'include',
+                             headers: {
+                                 'content-type': 'application/json'
+                               },
+                             body: JSON.stringify(
+                                 paymentData)
+                         }).then((res) => {return res.json()})
+                         .then((res) => {SetConfirmation(res)})
+                         .catch((e) => {console.log(e)})
+        }
+    }, [confirmationButton])
+
 
 
 
@@ -240,22 +262,15 @@ function GenerarPago() {
                          })
      
                          if (isValid.length > 0){
-                             SetError('Todos los campos deben tener de 3 a 20 caracteres.' + isValid)
+                             SetError('Todos los campos deben tener de 3 a 20 caracteres.' )
                              return
                          }
-                         const paymentData = { ...payment };
-                         delete paymentData.studentName;
-                         fetch(url+'payments', {
-                             method:'POST', 
-                             credentials: 'include',
-                             headers: {
-                                 'content-type': 'application/json'
-                               },
-                             body: JSON.stringify(
-                                 paymentData)
-                         }).then((res) => {return res.json()})
-                         .then((res) => {SetConfirmation(res)})
-                         .catch((e) => {console.log(e)})
+                         else{
+                           
+                            SetVConfirmationButton(true)
+                            SetError('¿Estás seguro de registrar este pago por $' + payment.amount + ' para ' + payment.studentName + '?')
+                         }
+                         
      
                      }}>Registrar</button>
      
@@ -278,6 +293,13 @@ function GenerarPago() {
                      {see ? (<button class='btn btn-lg mx-1 ' style={{background:'#55d0b6', color:'black'}} onClick={() => {
                          navigate('/menu/Pagos/GenerarPago/'+confirmation.body.id)
                      }}>Ver pago</button>) : (<></>)}
+                     {VconfirmationButton ? (<button class='btn btn-lg mx-1 ' style={{background:'#55d0b6', color:'black'}} onClick={() => {
+                        SetOpen(false)
+                         SetConfirmationButton(true)
+                         SetVConfirmationButton(false)
+                         SetError('')
+                     }}>Confirmar</button>) : (<></>)}
+                     
                      
                  </div>
                 

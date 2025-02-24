@@ -10,6 +10,9 @@ function RegistroGasto() {
 
     const navigate = useNavigate()
     const [isOpen, SetOpen] = useState(false)
+    const [VconfirmationButton, SetVConfirmationButton] = useState(false)
+    const [confirmationButton, SetConfirmationButton] = useState(false)
+    const [payload, SetPayload] = useState(null)
     const [errorMessage, SetError] = useState('')
     const [data, SetData] = useState(null)
     const [loading, SetLoading] = useState(true)
@@ -70,6 +73,31 @@ function RegistroGasto() {
     }, [errorMessage])
 
     useEffect(() => {
+        if(payload !== null){
+            SetVConfirmationButton(true)
+            SetError('¿Estás seguro de que deseas registrar este gasto por $'+user.amount+ ' con el concepto ' + user.concept + '?')
+        }
+    }, [payload])
+
+    useEffect(() => {
+        if(confirmationButton){
+            fetch(url+'expenditures/', {
+                method:'POST',
+                credentials:'include',
+                headers: {
+                    'content-type': 'application/json'
+                  },
+                body: payload
+            }).then((res) => {return res.json()})
+            .then((res) => {SetConfirmation(res)})
+            .catch((e) => console.log(e))
+        }
+        else{
+            return
+        }
+    }, [confirmationButton])
+
+    useEffect(() => {
         if(confirmation != null){
             if(confirmation.error){
                 SetError('Ocurrió un error, por favor inténtalo de nuevo más tarde.')
@@ -123,6 +151,7 @@ function RegistroGasto() {
                  <div class='d-flex align-self-center ' style={{}}>
                      <form   method="POST" onSubmit={(e) => {
                          e.preventDefault()
+                         
      
                          const isValid = Object.entries(user).filter(([key, value]) => {
                             switch (key) {
@@ -136,26 +165,17 @@ function RegistroGasto() {
                                     return false
                             }
                          })
-     
+                         
                          if (isValid.length > 0) {
                              SetError('Todos los campos deben tener por lo menos 3 carácteres y no pasar de su límite especificado')
+                             return
                          }
-                         else {
+                    
                              const formData = new FormData(e.target)
-                             const payLoad = JSON.stringify(Object.fromEntries(formData))
+                             SetPayload(JSON.stringify(Object.fromEntries(formData)))
      
-                             fetch(url+'expenditures/', {
-                                 method:'POST',
-                                 credentials:'include',
-                                 headers: {
-                                     'content-type': 'application/json'
-                                   },
-                                 body: payLoad
-                             }).then((res) => {return res.json()})
-                             .then((res) => {SetConfirmation(res)})
-                             .catch((e) => console.log(e))
      
-                         }
+                         
                      }}>
                         <div class='d-flex align-self-end justify-content-end'>
                             <p class='text-end'> * = campo obligatorio</p>
@@ -200,15 +220,27 @@ function RegistroGasto() {
                </Modal.Header>
                <Modal.Body>{errorMessage}</Modal.Body>
                <Modal.Footer>
+               <div class='d-flex flex-row align-self-end'>
                  <button class='btn btn-lg  align-self-center' style={{background:'black', color:'white'}} onClick={() => {
                    SetOpen(false)
                    SetError('')
+                   SetConfirmationButton(false)
+                   SetVConfirmationButton(false)
+                   SetPayload(null)
                    if(confirmation !== null){
                     if(!confirmation.error){
                         location.reload()
                       }
                    }    
+                   
                  }}>Cerrar</button>
+                 {VconfirmationButton ? (<button class='btn btn-lg mx-1 ' style={{background:'#55d0b6', color:'black'}} onClick={() => {
+                        SetOpen(false)
+                         SetConfirmationButton(true)
+                         SetVConfirmationButton(false)
+                         SetError('')
+                     }}>Confirmar</button>) : (<></>)}
+                 </div>
                </Modal.Footer>
              </Modal>
             </main>
