@@ -96,14 +96,14 @@ function Alumnos(){
             
             SetNumber(students.body.numberOfPages)
             const sortedStudents = students.body.students.sort((a,b) => { 
-                // const comparedStudents = a.branchName.localeCompare(b.branchName)
-                // if(comparedStudents !== 0){
-                //     return comparedStudents
-                // }
-                if(a.teacher === null && b.teacher === null){
+                
+                if(a.teacher === null || b.teacher === null){
                     const comparedStudents = a.patLastName.localeCompare(b.patLastName)
                     if(comparedStudents !== 0){
                         return comparedStudents
+                    }
+                    else{
+                        return a.name.localeCompare(b.name)
                     }
                 }
                 else{
