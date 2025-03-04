@@ -15,6 +15,7 @@ function DetallesAlumno() {
     const [student, SetStudent] = useState(null)
     const [isOpen, SetOpen] = useState(false)
     const [isGeneral, SetGeneral] = useState(false)
+    // isGeneral sirve para saber si puede editar o no, no solo para saber si es general 
     const [errorMessage, SetError] = useState("¿Estás seguro de que deseas eliminar a este alumno?\nEste proceso no puede deshacerse.")
     const url = import.meta.env.VITE_URL
 
@@ -41,6 +42,7 @@ function DetallesAlumno() {
             if(data.body.type === 'general'){
                 SetGeneral(true)
             }
+            
         }
     }, [data])
 
@@ -48,6 +50,9 @@ function DetallesAlumno() {
         if(student != null){
             if(student.error){
                 SetError('Ocurrió un error cargando al estudiante, por favor inténtalo más tarde.')
+            }
+            if(data.body.type === 'admin'  && student.teacher !== null){
+                SetGeneral(true)
             }
             SetLoading(false)
         }
@@ -64,6 +69,10 @@ function DetallesAlumno() {
             }
         }
     }, [deleted])
+
+    useEffect(() => {
+        console.log(isGeneral)
+    }, [isGeneral])
 
     if(!loading){
         return(
@@ -127,10 +136,14 @@ function DetallesAlumno() {
                 <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                     <p class='h6' style={{width:'45vw',}}>Sucursal perteneciente: </p>
                     <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.branchName || 'No registrada'}</p>
+                </div>
+                <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
+                    <p class='h6' style={{width:'45vw',}}>Maestro: </p>
+                    <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>{student.teacher || 'Global'}</p>
                 </div>      
                 
             </div>
-            {isGeneral ? (<button class='btn align-self-end' style={{background:'black', color:'white'}} onClick={() => {
+            {isGeneral ? (<button class='btn align-self-center my-1 fs-4' style={{background:'black', color:'white'}} onClick={() => {
                 navigate('/menu/Alumnos/')
             }}> Regresar</button>) : (<div class='d-flex flex-row align-self-center'>
             <button class=' btn  d-flex  m-1' style={{background:'black', color:'white'}} onClick={() => {

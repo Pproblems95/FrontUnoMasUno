@@ -4,13 +4,6 @@ import './RegistroAlumno.css'
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-// const data2 = [
-//     {name: 'Morales Hernandez Jose Luis', sucursal:'instituto tecnologico de tijuana', id:0},
-//     {name: 'sinuhe de jesus velazquez duran', sucursal:'instituto tecnologico de mexico', id:1},
-//     {name: 'oscar arrellano lopez', sucursal: 'instituto tecnologico de mis huevos', id:2},
-//     {name: 'alma maria rico', sucursal: 'instituto tecnologico del sexo', id:2}
-
-// ]
 
 function Item(props){
     const navigate = useNavigate()
@@ -19,8 +12,8 @@ function Item(props){
             <div class='d-flex flex-row justify-content-between  border-bottom border-dark   ' style={{  borderBottomWidth:10, }} > 
                     <div class=' d-flex  text-truncate  ' style={{width:'33vw'}}>
                     
-                    <p class=' align-self-center h6' style={{fontWeight:'bold', marginRight:10, }}>Sucursal:</p>
-                    <p class='align-self-center' style={{marginTop:'1.4vh'}}>{props.sucursal}</p>
+                    <p class=' align-self-center h6' style={{fontWeight:'bold', marginRight:10, }}>Maestro:</p>
+                    <p class='align-self-center' style={{marginTop:'1.4vh'}}>{props.maestro}</p>
                     </div>
                     
                     <div class=' d-inline-flex  text-truncate  ' style={{width:'33vw'}}>
@@ -59,7 +52,7 @@ function Alumnos(){
         ending: false
     })
     useEffect(() => {
-        fetch(url+'auth/check', { //le quite una c a check
+        fetch(url+'auth/check', { 
             method: 'GET',
             credentials: 'include',
         })
@@ -102,12 +95,20 @@ function Alumnos(){
             }
             
             SetNumber(students.body.numberOfPages)
-            const sortedStudents = students.body.students.sort((a,b) => { const comparedStudents = a.branchName.localeCompare(b.branchName)
-                if(comparedStudents !== 0){
-                    return comparedStudents
+            const sortedStudents = students.body.students.sort((a,b) => { 
+                // const comparedStudents = a.branchName.localeCompare(b.branchName)
+                // if(comparedStudents !== 0){
+                //     return comparedStudents
+                // }
+                if(a.teacher === null && b.teacher === null){
+                    const comparedStudents = a.patLastName.localeCompare(b.patLastName)
+                    if(comparedStudents !== 0){
+                        return comparedStudents
+                    }
                 }
                 else{
-                    return a.patLastName.localeCompare(b.patLastName)
+                    const comparedStudents = a.teacher.localeCompare(b.teacher)
+                    return comparedStudents
                 }
             })
             SetStudentsList(sortedStudents)
@@ -266,7 +267,7 @@ function Alumnos(){
                  <ul style={{listStyle:'none', padding:0, margin:0}}>
                     
                      {studentsList.map((student) =>  (
-                        <Item key={student.id} sucursal={student.branchName || 'Sin registros'} name={student.patLastName + ' ' + (student.matLastName || '') + ' ' + student.name}  id={student.id}> </Item>))}
+                        <Item key={student.id} maestro={student.teacher || 'Global'} name={student.patLastName + ' ' + (student.matLastName || '') + ' ' + student.name}  id={student.id}> </Item>))}
                 </ul>
                  </div>
                  <div class='d-flex flex-row, align-self-center' style={{}}>
