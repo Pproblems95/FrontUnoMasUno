@@ -152,7 +152,7 @@ function Cortes(){
             <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2'>
                 <p class='h6' style={{width:'45vw',}}>Fondo de caja: </p>
                 <p style={{marginTop:'1.5vh', width:'45vw' ,}} class='text-end text-break'>
-                    {audit.cashfund ? `$${audit.cashFund}` : 'Sin datos'}
+                    {audit.cashFund ? `$${audit.cashFund}` : 'Sin datos'}
                 </p>
             </div>
             <div style={{}} class='d-flex flex-row justify-content-between align-items-center mx-2 border-black border-top'>
